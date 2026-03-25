@@ -14,13 +14,7 @@
 ### アプリ②：管理画面（あなた用）
 
 - **Main file path**: `onayami_sodan_app/admin_app.py`
-- Secrets を設定（必須）
-
-#### Secrets（管理画面アプリ側）
-
-```toml
-ADMIN_PASS = "好きなパスコード"
-```
+- パスコードなし（URLを知っている人は見れてしまうので、管理URLは共有しない運用にしてください）
 
 ## ローカル起動（確認用）
 

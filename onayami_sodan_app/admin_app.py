@@ -65,31 +65,11 @@ def apply_theme() -> None:
     )
 
 
-def require_admin() -> bool:
-    if "ADMIN_PASS" not in st.secrets:
-        st.error("管理画面パスコードが未設定です。StreamlitのSecretsに `ADMIN_PASS` を設定してください。")
-        return False
-    if st.session_state.get("is_admin") is True:
-        return True
-
-    st.info("管理画面です。パスコードを入力してください。")
-    code = st.text_input("管理画面パスコード", type="password")
-    if st.button("管理画面に入る", use_container_width=True):
-        if code == str(st.secrets.get("ADMIN_PASS")):
-            st.session_state["is_admin"] = True
-            st.rerun()
-        st.error("パスコードが違います。")
-    return False
-
-
 def main() -> None:
     st.set_page_config(page_title="お悩み相談 管理画面", page_icon="🖼️", layout="wide")
     apply_theme()
     st.title("お悩み相談 管理画面")
     st.caption("届いた相談を確認し、そのまま動画素材として保存できます。")
-
-    if not require_admin():
-        return
 
     top_left, _ = st.columns([1, 4])
     with top_left:
