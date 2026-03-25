@@ -156,7 +156,7 @@ def main() -> None:
         them_birth = str(question_data.get("them_birth") or "").strip()
         birth_line = ""
         if you_birth or them_birth:
-            birth_line = f"<div class=\\"meta\\">生年月日：あなた {you_birth or '—'} / お相手 {them_birth or '—'}</div>"
+            birth_line = f'<div class="meta">生年月日：あなた {you_birth or "—"} / お相手 {them_birth or "—"}</div>'
         st.markdown(
             f"""
             <div class="summary-card">
