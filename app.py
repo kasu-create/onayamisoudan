@@ -135,6 +135,12 @@ def main() -> None:
     st.set_page_config(page_title="恋愛相談フォーム", page_icon="🌙", layout="wide")
     apply_theme()
 
+    # 送信後のクリアは「次のrerunの最初」に行う（widget生成後に session_state を触るとStreamlit例外になるため）
+    if st.session_state.get("_clear_form_once") is True:
+        for key in ("form_name", "form_you_birth", "form_them_birth", "form_question"):
+            st.session_state[key] = ""
+        st.session_state["_clear_form_once"] = False
+
     st.markdown(
         """
         <div class="hero">
@@ -229,8 +235,7 @@ def main() -> None:
                     them_birth=them_birth_norm,
                 )
                 st.success("送信しました。ありがとうございます。")
-                for key in ("form_name", "form_you_birth", "form_them_birth", "form_question"):
-                    st.session_state[key] = ""
+                st.session_state["_clear_form_once"] = True
                 st.rerun()
     st.markdown(
         """
