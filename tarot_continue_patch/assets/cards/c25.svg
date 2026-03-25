@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="600" viewBox="0 0 360 600" role="img" aria-label="ワンドの3">
+  <defs>
+    <linearGradient id="g25" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="hsl(65 55% 16%)"/>
+      <stop offset="100%" stop-color="hsl(113 60% 9%)"/>
+    </linearGradient>
+    <radialGradient id="r25" cx="50%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="hsla(113 90% 78% / 0.45)"/>
+      <stop offset="100%" stop-color="hsla(113 90% 78% / 0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="600" rx="22" fill="url(#g25)"/>
+  <rect x="12" y="12" width="336" height="576" rx="14" fill="none" stroke="hsl(113 50% 55%)" stroke-width="2"/>
+  <circle cx="180" cy="220" r="120" fill="url(#r25)"/>
+  <circle cx="180" cy="220" r="86" fill="none" stroke="hsl(113 85% 80%)" stroke-width="1.6"/>
+  <text x="180" y="78" fill="hsl(113 90% 88%)" text-anchor="middle" style="font: 600 18px Georgia, serif; letter-spacing:2px;">25</text>
+  <text x="180" y="420" fill="hsl(113 95% 92%)" text-anchor="middle" style="font: 700 22px Georgia, serif;">ワンドの3</text>
+  <text x="180" y="452" fill="hsl(113 40% 72%)" text-anchor="middle" style="font: 500 13px 'Segoe UI', sans-serif;">小アルカナ</text>
+  <text x="180" y="560" fill="hsl(113 50% 70%)" text-anchor="middle" style="font: 500 10px 'Segoe UI', sans-serif; letter-spacing:3px;">REN'S TAROT</text>
+</svg>

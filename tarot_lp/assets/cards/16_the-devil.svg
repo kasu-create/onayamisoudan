@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="700" viewBox="0 0 420 700" role="img" aria-label="The Devil">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="hsl(285 65% 18%)"/>
+      <stop offset="100%" stop-color="hsl(335 70% 10%)"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="hsla(335 95% 85% / 0.55)"/>
+      <stop offset="100%" stop-color="hsla(335 95% 85% / 0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="420" height="700" rx="26" fill="url(#bg)"/>
+  <rect x="14" y="14" width="392" height="672" rx="18" fill="none" stroke="hsl(335 55% 72%)" stroke-width="2.3"/>
+  <rect x="33" y="33" width="354" height="634" rx="10" fill="none" stroke="hsl(335 55% 50%)" stroke-width="1"/>
+  <circle cx="210" cy="250" r="138" fill="url(#glow)"/>
+  <circle cx="210" cy="250" r="98" fill="none" stroke="hsl(335 90% 85%)" stroke-width="1.8"/>
+  <path d="M210 150 L240 250 L210 350 L180 250 Z" fill="none" stroke="hsl(335 90% 83%)" stroke-width="2"/>
+  <path d="M112 250 H308 M210 152 V348" stroke="hsl(335 90% 83%)" stroke-width="1.2"/>
+  <text x="210" y="90" fill="hsl(335 92% 88%)" text-anchor="middle" style="font: 600 22px Georgia, serif; letter-spacing: 2px;">16</text>
+  <text x="210" y="492" fill="hsl(335 95% 90%)" text-anchor="middle" style="font: 700 28px Georgia, serif;">The Devil</text>
+  <text x="210" y="528" fill="hsl(335 55% 78%)" text-anchor="middle" style="font: 500 16px 'Segoe UI', sans-serif; letter-spacing: 1px;">Major Arcana</text>
+  <text x="210" y="638" fill="hsl(335 65% 84%)" text-anchor="middle" style="font: 500 12px 'Segoe UI', sans-serif; letter-spacing: 3px;">REN'S TAROT COLLECTION</text>
+</svg>

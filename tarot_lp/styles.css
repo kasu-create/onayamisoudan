@@ -1,0 +1,152 @@
+:root {
+  --bg: #0d0717;
+  --bg2: #140c24;
+  --panel: #1c1233;
+  --text: #f3e9ff;
+  --muted: #b9a8d1;
+  --line: #6f58a5;
+  --accent: #b38cff;
+  --accent2: #ffd98a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 18% 15%, rgba(179, 140, 255, 0.22), transparent 38%),
+    radial-gradient(circle at 80% 0%, rgba(255, 217, 138, 0.13), transparent 35%),
+    linear-gradient(180deg, var(--bg), var(--bg2));
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.hero {
+  border: 1px solid var(--line);
+  background: rgba(28, 18, 51, 0.72);
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.brand {
+  margin: 0;
+  color: var(--accent2);
+  letter-spacing: 3px;
+  font-size: 12px;
+}
+
+h1,
+h2 {
+  font-family: Georgia, serif;
+}
+
+h1 {
+  margin: 10px 0 12px;
+  font-size: clamp(28px, 5vw, 44px);
+}
+
+.lead {
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 11px 18px;
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.primary {
+  background: linear-gradient(90deg, #8557e8, #a56bff);
+  border-color: transparent;
+}
+
+.ghost {
+  background: transparent;
+}
+
+.draw,
+.gallery-section {
+  margin-top: 24px;
+  background: rgba(28, 18, 51, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.draw-result {
+  min-height: 100px;
+}
+
+.draw-result img {
+  width: min(280px, 92%);
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  display: block;
+}
+
+.draw-result .name {
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.small {
+  color: var(--muted);
+}
+
+.gallery {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: rgba(13, 7, 23, 0.65);
+  border: 1px solid #4f3a7d;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.18s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 3 / 5;
+  object-fit: cover;
+}
+
+.card p {
+  margin: 0;
+  padding: 8px 8px 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hidden {
+  display: none;
+}

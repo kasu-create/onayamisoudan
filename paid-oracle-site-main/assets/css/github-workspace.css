@@ -1,0 +1,449 @@
+/* GitHub ダーク風「作業画面」— 鑑定ページ専用 */
+
+.gh-workspace {
+  --gh-canvas-default: #0d1117;
+  --gh-canvas-subtle: #161b22;
+  --gh-canvas-inset: #010409;
+  --gh-border-default: #30363d;
+  --gh-border-muted: #21262d;
+  --gh-fg-default: #e6edf3;
+  --gh-fg-muted: #8b949e;
+  --gh-accent-fg: #58a6ff;
+  --gh-success-fg: #3fb950;
+  --gh-attention-fg: #d29922;
+  --gh-btn-bg: #21262d;
+  --gh-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  --gh-font-mono: ui-monospace, "SF Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+
+  margin: 0;
+  min-height: 100vh;
+  background: var(--gh-canvas-default);
+  color: var(--gh-fg-default);
+  font-family: var(--gh-font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.gh-workspace a {
+  color: var(--gh-accent-fg);
+  text-decoration: none;
+}
+.gh-workspace a:hover {
+  text-decoration: underline;
+}
+
+/* —— トップバー —— */
+.gh-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  height: 48px;
+  background: var(--gh-canvas-inset);
+  border-bottom: 1px solid var(--gh-border-default);
+}
+
+.gh-topbar__mark {
+  font-size: 1.25rem;
+  opacity: 0.85;
+}
+
+.gh-topbar__title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: -0.02em;
+}
+
+.gh-topbar__badge {
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--gh-attention-fg);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.gh-topbar__fill {
+  flex: 1;
+}
+
+.gh-topbar__hint {
+  font-size: 0.75rem;
+  color: var(--gh-fg-muted);
+  font-family: var(--gh-font-mono);
+}
+
+/* —— リポジトリバー —— */
+.gh-repo-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gh-border-muted);
+  background: var(--gh-canvas-default);
+}
+
+.gh-repo-bar__path {
+  font-family: var(--gh-font-mono);
+  font-size: 0.8rem;
+  color: var(--gh-fg-muted);
+}
+
+.gh-repo-bar__path strong {
+  color: var(--gh-accent-fg);
+  font-weight: 600;
+}
+
+.gh-repo-bar__pill {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: var(--gh-canvas-subtle);
+  border: 1px solid var(--gh-border-default);
+  color: var(--gh-fg-muted);
+}
+
+/* —— タブ —— */
+.gh-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--gh-border-default);
+  background: var(--gh-canvas-default);
+}
+
+.gh-tab {
+  padding: 0.65rem 1rem;
+  margin-bottom: -1px;
+  font-size: 0.875rem;
+  color: var(--gh-fg-muted);
+  border: 1px solid transparent;
+  border-radius: 6px 6px 0 0;
+  cursor: default;
+}
+
+.gh-tab[aria-selected="true"] {
+  color: var(--gh-fg-default);
+  background: var(--gh-canvas-subtle);
+  border-color: var(--gh-border-default);
+  border-bottom-color: var(--gh-canvas-subtle);
+  font-weight: 600;
+}
+
+/* —— 3カラム —— */
+.gh-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) minmax(160px, 200px);
+  gap: 0;
+  min-height: calc(100vh - 120px);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .gh-layout {
+    grid-template-columns: 1fr;
+  }
+  .gh-sidebar,
+  .gh-activity {
+    display: none;
+  }
+}
+
+.gh-sidebar {
+  border-right: 1px solid var(--gh-border-default);
+  background: var(--gh-canvas-default);
+  padding: 1rem 0.75rem;
+  position: sticky;
+  top: 0;
+}
+
+.gh-sidebar__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gh-fg-muted);
+  padding: 0 0.5rem 0.5rem;
+}
+
+.gh-tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--gh-font-mono);
+  font-size: 0.72rem;
+  color: var(--gh-fg-muted);
+}
+
+.gh-tree li {
+  padding: 0.2rem 0.35rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gh-tree li.is-active {
+  background: var(--gh-canvas-subtle);
+  color: var(--gh-accent-fg);
+}
+
+.gh-main {
+  padding: 1rem 1.25rem 2.5rem;
+  background: var(--gh-canvas-default);
+  border-right: 1px solid var(--gh-border-default);
+}
+
+@media (max-width: 900px) {
+  .gh-main {
+    border-right: none;
+  }
+}
+
+.gh-panel {
+  background: var(--gh-canvas-subtle);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 6px;
+  padding: 1rem 1.1rem;
+}
+
+.gh-panel__title {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.gh-panel__desc {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  color: var(--gh-fg-muted);
+}
+
+.gh-activity {
+  padding: 1rem 0.75rem;
+  position: sticky;
+  top: 0;
+}
+
+.gh-activity__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--gh-fg-muted);
+  margin-bottom: 0.5rem;
+}
+
+.gh-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.72rem;
+  color: var(--gh-fg-muted);
+  font-family: var(--gh-font-mono);
+}
+
+.gh-timeline li {
+  padding: 0.35rem 0;
+  border-left: 2px solid var(--gh-border-default);
+  padding-left: 0.6rem;
+  margin-left: 0.2rem;
+}
+
+.gh-timeline li.is-latest {
+  border-left-color: var(--gh-success-fg);
+  color: var(--gh-fg-default);
+}
+
+/* —— フォーム（GitHub寄せ） —— */
+.gh-field span {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.gh-textarea {
+  width: 100%;
+  min-height: 88px;
+  padding: 0.5rem 0.65rem;
+  font-family: var(--gh-font-mono);
+  font-size: 0.8rem;
+  color: var(--gh-fg-default);
+  background: var(--gh-canvas-inset);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.gh-textarea:focus {
+  outline: none;
+  border-color: var(--gh-accent-fg);
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+.gh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--gh-font-sans);
+  color: var(--gh-fg-default);
+  background: var(--gh-success-fg);
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.gh-btn:hover {
+  filter: brightness(1.08);
+}
+
+.gh-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.gh-btn--secondary {
+  background: var(--gh-btn-bg);
+  color: var(--gh-fg-default);
+  border-color: var(--gh-border-default);
+}
+
+.gh-link-back {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+/* —— スプレッド & タロットカード —— */
+.spread-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+  justify-content: flex-start;
+}
+
+.spread-slot {
+  flex: 1 1 140px;
+  max-width: 180px;
+}
+
+.spread-slot__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--gh-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.spread-slot__hint {
+  font-size: 0.68rem;
+  color: var(--gh-fg-muted);
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+}
+
+.tarot-card {
+  aspect-ratio: 2 / 3.2;
+  border-radius: 10px;
+  border: 1px solid var(--gh-border-default);
+  background: linear-gradient(165deg, #1c2128 0%, #0d1117 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.tarot-card[data-arcana="major"] {
+  border-color: #8957e5;
+  box-shadow: 0 0 0 1px rgba(137, 87, 229, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.tarot-card[data-suit="wands"] {
+  border-color: #f0883e;
+}
+.tarot-card[data-suit="cups"] {
+  border-color: #58a6ff;
+}
+.tarot-card[data-suit="swords"] {
+  border-color: #8b949e;
+}
+.tarot-card[data-suit="pentacles"] {
+  border-color: #3fb950;
+}
+
+.tarot-card__glyph {
+  font-size: 1.35rem;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+  opacity: 0.95;
+}
+
+.tarot-card__name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.tarot-card__meta {
+  margin-top: 0.35rem;
+  font-size: 0.65rem;
+  color: var(--gh-fg-muted);
+  font-family: var(--gh-font-mono);
+}
+
+.tarot-card__gist {
+  margin-top: 0.5rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--gh-border-muted);
+  font-size: 0.62rem;
+  line-height: 1.4;
+  color: var(--gh-fg-muted);
+  text-align: left;
+  max-height: 4.8em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.shuffle-status {
+  font-family: var(--gh-font-mono);
+  font-size: 0.75rem;
+  color: var(--gh-success-fg);
+  min-height: 1.25rem;
+  margin-top: 0.25rem;
+}
+
+.summary-box {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--gh-fg-default);
+  white-space: pre-wrap;
+  font-family: var(--gh-font-sans);
+}
+
+.token-line {
+  font-size: 0.75rem;
+  color: var(--gh-fg-muted);
+  font-family: var(--gh-font-mono);
+  margin: 0.25rem 0 0;
+}
+
+.is-hidden[hidden],
+.gh-workspace .is-hidden {
+  display: none !important;
+}

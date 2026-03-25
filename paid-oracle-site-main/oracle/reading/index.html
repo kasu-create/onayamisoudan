@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0c0b0a" />
+  <meta name="color-scheme" content="dark" />
+  <title>れんの恋愛タロット</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="description" content="れんがあなたの恋愛を占います。悩みと生年月日からカードを引き、ふたりの関係性と動きやすい時期をお届けします。" />
+  <link rel="stylesheet" href="../../assets/css/paid-reading.css" />
+</head>
+<body class="paid-reading">
+  <a class="pr-skip" href="#pr-main">本文へスキップ</a>
+
+  <header class="pr-header">
+    <p class="pr-header__badge">REN'S TAROT</p>
+    <h1 class="pr-header__title">れんの恋愛タロット</h1>
+    <p class="pr-header__sub">いまの恋の悩みと、あなた（と気になるあの人）の生年月日を教えてね。カードを引いて、ふたりのこれからと「動きやすい日」を読み解くよ。</p>
+  </header>
+
+  <ol class="pr-steps" aria-label="鑑定の流れ">
+    <li id="step-1" class="is-active">悩み入力</li>
+    <li id="step-2">3枚</li>
+    <li id="step-3">5枚</li>
+    <li id="step-4">鑑定</li>
+  </ol>
+
+  <main id="pr-main" class="pr-main">
+    <section id="phase-intro" class="pr-panel phase" data-phase="intro">
+      <h2>いまの恋の悩みを教えて</h2>
+
+      <div class="pr-form-grid">
+        <label class="pr-field">
+          <span>恋の悩み・聞きたいこと</span>
+          <textarea id="concern" class="pr-textarea" rows="5" placeholder="好きな人のこと、関係性、気持ちの確かめ方…なんでも書いてね" maxlength="2000" required></textarea>
+        </label>
+
+        <label class="pr-field">
+          <span>あなたの生年月日</span>
+          <input type="date" id="self-birth" class="pr-input-date" required />
+        </label>
+
+        <label class="pr-field">
+          <span>気になるあの人の生年月日</span>
+          <input type="date" id="partner-birth" class="pr-input-date" />
+        </label>
+      </div>
+
+      <p id="form-error" class="pr-error" role="alert" aria-live="assertive"></p>
+      <button type="button" class="pr-btn" id="btn-start">シャッフルして 3枚を引く</button>
+      <p id="shuffle-intro" class="pr-shuffle-msg" aria-live="polite"></p>
+    </section>
+
+    <section id="phase-three" class="pr-panel phase is-hidden" data-phase="three" hidden>
+      <h2>3枚のカード</h2>
+      <p class="pr-panel__lead">いまの状況・壁になっているもの・乗り越えるヒント、の3つだよ。</p>
+      <div id="spread-three" class="spread-row" role="list"></div>
+      <button type="button" class="pr-btn" id="btn-to-five">残りをシャッフルして 5枚を引く</button>
+      <p id="shuffle-five" class="pr-shuffle-msg" aria-live="polite"></p>
+    </section>
+
+    <section id="phase-five" class="pr-panel phase is-hidden" data-phase="five" hidden>
+      <h2>5枚のカード</h2>
+      <p class="pr-panel__lead">もっと深いところまで読み解いていくね。</p>
+      <div id="spread-five" class="spread-row" role="list"></div>
+      <button type="button" class="pr-btn" id="btn-finish">鑑定文を表示する</button>
+    </section>
+
+    <section id="phase-summary" class="pr-panel phase is-hidden" data-phase="summary" hidden>
+      <h2>れんからのメッセージ</h2>
+      <div id="summary-body" class="summary-box"></div>
+    </section>
+  </main>
+
+  <script type="module" src="../../assets/js/reading.js"></script>
+</body>
+</html>

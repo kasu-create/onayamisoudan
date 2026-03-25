@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>無料版LP | れんの恋愛タロット</title>
+    <meta
+      name="description"
+      content="れんの恋愛タロット無料版LP。世界観を合わせたデザインで78枚のカードを一覧・1枚引きできます。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="brand">REN'S TAROT</p>
+        <h1>無料版 恋愛タロット</h1>
+        <p class="lead">
+          いまの恋に寄り添う世界観で、78枚のカードを公開中。<br />
+          まずは1枚引いて、今日のメッセージを受け取ってください。
+        </p>
+        <div class="actions">
+          <button id="draw-one" class="btn primary">1枚引く</button>
+          <button id="toggle-list" class="btn ghost">78枚を表示</button>
+        </div>
+      </section>
+
+      <section class="draw">
+        <h2>今日の1枚</h2>
+        <div id="draw-result" class="draw-result">
+          <p>「1枚引く」を押すと、カードが表示されます。</p>
+        </div>
+      </section>
+
+      <section id="gallery-section" class="gallery-section hidden">
+        <h2>78枚カード一覧</h2>
+        <p class="small">クリックでカード名を確認できます。</p>
+        <div id="gallery" class="gallery"></div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

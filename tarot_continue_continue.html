@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>無料鑑定｜恋愛オラクル</title>
+  <meta name="description" content="恋愛テーマを選んで無料鑑定。無料版は4テーマまで体験できます。" />
+  <style>
+    :root{
+      --bg: radial-gradient(circle at top left,#ffe5f3 0,#fff7ff 42%,#ffeaf2 100%);
+      --paper: linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,247,252,.98));
+      --ink:#241d22;
+      --muted:#6f636a;
+      --accent:#ff6ba5;
+      --accent2:#ff9bc8;
+      --line:#f0d6e2;
+      --soft:#fff9fc;
+      --lock:#c5b4bd;
+      --shadow:0 18px 40px rgba(210,140,180,.25);
+      --softShadow:0 10px 24px rgba(0,0,0,.08);
+      --r-xl:32px;
+      --r-lg:24px;
+      --r-md:18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; }
+
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic",sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      padding:20px 12px 40px;
+    }
+
+    .page{
+      max-width:980px;
+      margin:0 auto;
+      background:var(--paper);
+      border-radius:var(--r-xl);
+      box-shadow:var(--shadow);
+      padding:20px 16px 28px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(255,192,216,.7);
+      font-size:11px;
+      color:#b34a77;
+      margin-bottom:10px;
+    }
+
+    .dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#ff77aa,#ffb4e0);
+      box-shadow:0 0 8px rgba(255,105,180,.55);
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:26px;
+      line-height:1.45;
+    }
+
+    .sub{
+      margin:0 0 16px;
+      font-size:15px;
+      color:var(--muted);
+      line-height:1.85;
+    }
+
+    .panel{
+      display:none;
+      margin-top:14px;
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(255,210,232,.92);
+      border-radius:var(--r-lg);
+      box-shadow:var(--softShadow);
+      padding:16px 14px 18px;
+    }
+
+    .panel.show{ display:block; }
+
+    .panelTitle{
+      margin:0 0 10px;
+      font-size:17px;
+      font-weight:1000;
+      color:#2a1f25;
+    }
+
+    .themeGrid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .themeCard{
+      position:relative;
+      border:none;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid rgba(240,210,228,.95);
+      box-shadow:var(--softShadow);
+      padding:14px 12px;
+      text-align:left;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+
+    .themeCard:hover{
+      transform:translateY(-2px);
+      box-shadow:0 14px 28px rgba(210,140,180,.18);
+    }
+
+    .themeCard.locked{
+      background:#faf6f8;
+      border:1px solid #e7dbe1;
+      cursor:not-allowed;
+      color:#84767d;
+    }
+
+    .themeCard.locked:hover{
+      transform:none;
+      box-shadow:var(--softShadow);
+    }
+
+    .themeName{
+      font-size:16px;
+      font-weight:1000;
+      margin:0 0 6px;
+    }
+
+    .themeDesc{
+      font-size:13px;
+      line-height:1.65;
+      color:var(--muted);
+      margin:0;
+    }
+
+    .badgeRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:60px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:1000;
+      border:1px solid #f2cade;
+      background:#fff6fb;
+      color:#b34979;
+    }
+
+    .badge.lock{
+      background:#f4f1f3;
+      color:#766872;
+      border-color:#ddd1d8;
+    }
+
+    .lockOverlay{
+      position:absolute;
+      top:10px;
+      right:10px;
+      font-size:11px;
+      font-weight:1000;
+      color:#7a6e75;
+      background:#f1ebee;
+      border:1px solid #ddd1d8;
+      padding:4px 8px;
+      border-radius:999px;
+    }
+
+    .form{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .field.full{
+      grid-column:1 / -1;
+    }
+
+    label{
+      font-size:13px;
+      font-weight:1000;
+      color:#44323a;
+    }
+
+    input,select,textarea{
+      width:100%;
+      padding:11px 12px;
+      border-radius:12px;
+      border:1px solid #f0cde2;
+      background:#fff;
+      font-size:14px;
+      color:#2d2329;
+    }
+
+    textarea{
+      min-height:110px;
+      resize:vertical;
+    }
+
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+    .actions{
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:12px 16px;
+      border:none;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;
+      text-decoration:none;
+      font-size:13px;
+      font-weight:1000;
+      cursor:pointer;
+      min-height:44px;
+    }
+
+    .btn.ghost{
+      background:transparent;
+      border:1px solid #efcfe0;
+      color:#8a5a72;
+    }
+
+    .loading{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border:1px dashed #efc2de;
+      border-radius:18px;
+      background:linear-gradient(120deg,#fff7fc,#fffdfc);
+      padding:12px;
+    }
+
+    .spinner{
+      width:16px;
+      height:16px;
+      border-radius:50%;
+      border:3px solid #f1c6dd;
+      border-top-color:#ff86b8;
+      animation:spin 1s linear infinite;
+      flex:0 0 auto;
+    }
+
+    @keyframes spin{
+      to{ transform:rotate(360deg); }
+    }
+
+    .summaryGrid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .summaryBox{
+      border:1px dashed #efc2de;
+      background:linear-gradient(120deg,#fff7fc,#fffdfc);
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .summaryBox h3{
+      margin:0 0 6px;
+      font-size:14px;
+    }
+
+    .summaryBox p{
+      margin:0;
+      font-size:14px;
+      line-height:1.9;
+      white-space:pre-wrap;
+      color:#31252d;
+    }
+
+    .cards{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:space-between;
+      margin-top:12px;
+    }
+
+    .cardBtn{
+      flex:1 1 30%;
+      max-width:300px;
+      min-width:110px;
+      padding:0;
+      background:transparent;
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+    }
+
+    .cardBtn[aria-pressed="true"]{
+      outline:2px solid #ff8fbe;
+      outline-offset:4px;
+    }
+
+    .cardBtn img{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:12px;
+      box-shadow:var(--softShadow);
+    }
+
+    .resultHero{
+      border-radius:20px;
+      border:1px solid #f1d3e3;
+      background:linear-gradient(135deg,#fff1f8,#fff8fc);
+      padding:16px;
+      margin-bottom:14px;
+    }
+
+    .resultHeroTitle{
+      margin:0 0 8px;
+      font-size:18px;
+      color:#8b4366;
+      font-weight:1000;
+    }
+
+    .resultHeroText{
+      margin:0;
+      line-height:1.9;
+      color:#503844;
+      white-space:pre-wrap;
+    }
+
+    .toolGrid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .toolCard{
+      border:1px solid rgba(235,205,222,.95);
+      background:#fff;
+      border-radius:18px;
+      box-shadow:var(--softShadow);
+      padding:16px;
+    }
+
+    .toolCard h3{
+      margin:0 0 8px;
+      font-size:16px;
+    }
+
+    .toolCard p{
+      margin:0 0 12px;
+      font-size:14px;
+      line-height:1.8;
+      color:#5b4752;
+    }
+
+    .lockMessage{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      background:#fff7fb;
+      border:1px solid #f1cadc;
+      color:#7a445f;
+      font-size:13px;
+      line-height:1.8;
+    }
+
+    @media (max-width:768px){
+      body{ padding:12px 8px 24px; }
+      .page{ padding:16px 12px 22px; border-radius:24px; }
+      h1{ font-size:22px; }
+      .form{ grid-template-columns:1fr; }
+      .cards{ gap:8px; }
+      .cardBtn{ min-width:92px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="chip"><span class="dot"></span>無料版テーマあり</div>
+    <h1>今の恋愛の流れを、テーマ別に無料で整理できます。</h1>
+    <p class="sub">
+      無料版では4テーマまで体験できます。  
+      それ以外のテーマはロック表示にしてあるので、あとから追加しやすい構成です。
+    </p>
+
+    <section class="panel show" id="step0">
+      <h2 class="panelTitle">テーマを選んでください</h2>
+      <div id="themeGrid" class="themeGrid"></div>
+      <div id="lockMessage" class="lockMessage" style="display:none;"></div>
+    </section>
+
+    <section class="panel" id="step1">
+      <h2 class="panelTitle">内容を入力してください</h2>
+      <div class="form">
+        <div class="field">
+          <label for="rel">関係性</label>
+          <select id="rel">
+            <option value="片想い">片想い</option>
+            <option value="曖昧">曖昧 / 付き合う前</option>
+            <option value="交際中">交際中</option>
+            <option value="元恋人">元恋人</option>
+            <option value="音信不通">音信不通</option>
+            <option value="夫婦">夫婦 / パートナー</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="timing">いま一番気になること</label>
+          <input id="timing" placeholder="例：連絡が来るか、進展するか" />
+        </div>
+
+        <div class="field">
+          <label for="bdYou">あなたの生年月日</label>
+          <input id="bdYou" inputmode="numeric" maxlength="8" placeholder="例：19990101" />
+        </div>
+
+        <div class="field">
+          <label for="bdThem">お相手の生年月日</label>
+          <input id="bdThem" inputmode="numeric" maxlength="8" placeholder="不明なら空欄" />
+        </div>
+
+        <div class="field full">
+          <label for="memo">補足メモ</label>
+          <textarea id="memo" placeholder="最近の状況や気になることがあれば自由に入力"></textarea>
+          <div class="hint">ここに書いた内容は画面の結果づくりに使います。送信はされません。</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="startBtn" type="button">無料で鑑定する</button>
+        <button class="btn ghost" id="backToThemesBtn" type="button">テーマ選択に戻る</button>
+      </div>
+    </section>
+
+    <section class="panel" id="step2">
+      <h2 class="panelTitle">鑑定しています…</h2>
+      <div class="loading">
+        <span class="spinner"></span>
+        <p>テーマに合わせて流れを整理しています…</p>
+      </div>
+    </section>
+
+    <section class="panel" id="step3">
+      <h2 class="panelTitle">まず、今の流れの全体像です</h2>
+      <div class="summaryGrid" id="overviewGrid"></div>
+      <div class="actions">
+        <button class="btn" id="toCardsBtn" type="button">次へ：カードを選ぶ</button>
+        <button class="btn ghost" id="backToFormBtn" type="button">入力に戻る</button>
+      </div>
+    </section>
+
+    <section class="panel" id="step4">
+      <h2 class="panelTitle">3枚のカードから、直感で1枚選んでください</h2>
+      <div class="cards">
+        <button class="cardBtn" type="button" data-card="A" aria-pressed="false">
+          <img src="0317Acard.png" alt="カードA" />
+        </button>
+        <button class="cardBtn" type="button" data-card="B" aria-pressed="false">
+          <img src="0317Bcard.png" alt="カードB" />
+        </button>
+        <button class="cardBtn" type="button" data-card="C" aria-pressed="false">
+          <img src="0317Ccard.png" alt="カードC" />
+        </button>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="backToOverviewBtn" type="button">前に戻る</button>
+      </div>
+    </section>
+
+    <section class="panel" id="step5">
+      <h2 class="panelTitle">無料版の鑑定結果</h2>
+
+      <div class="resultHero">
+        <p class="resultHeroTitle" id="finalTitle"></p>
+        <p class="resultHeroText" id="finalLead"></p>
+      </div>
+
+      <div class="summaryGrid" id="resultGrid"></div>
+
+      <div class="toolGrid">
+        <div class="toolCard">
+          <h3>お悩み相談ツール</h3>
+          <p>今の悩みを整理したい時は、こちらの相談ページから続けて確認できます。</p>
+          <a class="btn" href="http://192.168.0.231:8501/" target="_blank" rel="noopener noreferrer">お悩み相談へ進む</a>
+        </div>
+
+        <div class="toolCard">
+          <h3>ストアーズ</h3>
+          <p>より深いメニューや今後追加していくサービスは、こちらから確認できます。</p>
+          <a class="btn" href="https://lp8hnyu9ebgefokdjdyh.stores.jp/" target="_blank" rel="noopener noreferrer">STORESを見る</a>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn ghost" id="restartBtn" type="button">最初からやり直す</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /*
+      テーマ追加はここだけ増やせばOKです。
+      free: true なら無料表示
+      free: false ならロック表示
+    */
+    var THEMES = [
+      { id: "crush", name: "片想い", desc: "今の距離感と進め方を見ます", free: true },
+      { id: "reunion", name: "復縁", desc: "離れた相手との流れを見ます", free: true },
+      { id: "silent", name: "音信不通", desc: "連絡の流れや再接点を見ます", free: true },
+      { id: "encounter", name: "出会い", desc: "新しい恋の入り口を見ます", free: true },
+
+      { id: "marriage", name: "結婚", desc: "関係の先と現実面を整理します", free: false },
+      { id: "triangle", name: "複雑恋愛", desc: "言いにくい関係性の流れを見ます", free: false },
+      { id: "distance", name: "遠距離恋愛", desc: "距離がある恋の進め方を見ます", free: false },
+      { id: "married", name: "既婚者の恋", desc: "慎重さが必要な流れを見ます", free: false }
+    ];
+
+    var THEME_TEXT = {
+      crush: {
+        overview: [
+          { title: "今の空気", text: "相手は完全に無関心というより、様子を見ながら距離を測っている状態です。" },
+          { title: "進みやすい形", text: "強く動くより、相手が返しやすい軽めの接点が流れを作ります。" },
+          { title: "無料版の見どころ", text: "今は押す時か待つ時か、その見極めを中心に整理します。" }
+        ]
+      },
+      reunion: {
+        overview: [
+          { title: "今の空気", text: "過去の印象は残っていても、相手は慎重に距離を取っている可能性があります。" },
+          { title: "進みやすい形", text: "感情のぶつけ直しより、安心感を取り戻す流れが大切です。" },
+          { title: "無料版の見どころ", text: "復縁の可能性より先に、今の接点の作り方を整理します。" }
+        ]
+      },
+      silent: {
+        overview: [
+          { title: "今の空気", text: "連絡が止まっている時ほど、表面より相手の事情や心の余白が影響します。" },
+          { title: "進みやすい形", text: "動くにしても、重さより自然さが鍵になります。" },
+          { title: "無料版の見どころ", text: "焦って追うより、戻りやすい流れをどう作るかを見ます。" }
+        ]
+      },
+      encounter: {
+        overview: [
+          { title: "今の空気", text: "恋愛運そのものより、出会いを受け取る姿勢が変化の入口になっています。" },
+          { title: "進みやすい形", text: "自分の軸を整えるほど、相性の良い相手が見えやすくなります。" },
+          { title: "無料版の見どころ", text: "出会いの有無だけでなく、どんな流れで恋が動くかを整理します。" }
+        ]
+      }
+    };
+
+    var CARD_RESULTS = {
+      A: {
+        tone: "慎重に整える流れ",
+        now: "今は感情を一気に動かすより、相手も自分も落ち着いて見ている時期です。",
+        past: "過去のすれ違いや温度差が、まだ少しだけ今の反応に影響しています。",
+        future: "近いうちに小さなきっかけから流れが戻りやすい兆しがあります。",
+        next: "結論を急がず、まずは相手が受け取りやすい形で接点を作ることが大切です。"
+      },
+      B: {
+        tone: "関係がやわらかく動く流れ",
+        now: "今は見えないところで相手の中の印象が少しずつ育っています。",
+        past: "過去のやり取りの中に、相手が安心していた感覚が残っています。",
+        future: "タイミングが合えば、思ったより自然に距離が縮まりやすい流れです。",
+        next: "重さよりも親しみやすさを優先すると、相手の反応が変わりやすくなります。"
+      },
+      C: {
+        tone: "気持ちの整理が先に必要な流れ",
+        now: "今は外側の変化より、自分の本音や不安の整理が重要な段階です。",
+        past: "過去の傷つきや迷いが、今の受け取り方に少し影響しているようです。",
+        future: "自分の気持ちが整うほど、関係の見え方も自然に変わっていきます。",
+        next: "相手を追う前に、自分が本当に望む形を明確にすることが流れを安定させます。"
+      }
+    };
+
+    function $(selector){ return document.querySelector(selector); }
+    function show(el){ if (el) el.classList.add("show"); }
+    function hide(el){ if (el) el.classList.remove("show"); }
+
+    var state = {
+      themeId: null,
+      themeName: "",
+      rel: "",
+      timing: "",
+      memo: "",
+      card: ""
+    };
+
+    function renderThemes(){
+      var grid = $("#themeGrid");
+      var lockMessage = $("#lockMessage");
+
+      grid.innerHTML = THEMES.map(function(theme){
+        if(theme.free){
+          return [
+            '<button class="themeCard" type="button" data-theme-id="', theme.id, '">',
+              '<div class="themeName">', theme.name, '</div>',
+              '<p class="themeDesc">', theme.desc, '</p>',
+              '<div class="badgeRow"><span class="badge">無料</span></div>',
+            '</button>'
+          ].join("");
+        }
+
+        return [
+          '<button class="themeCard locked" type="button" data-locked="true" data-theme-name="', theme.name, '">',
+            '<div class="lockOverlay">LOCK</div>',
+            '<div class="themeName">', theme.name, '</div>',
+            '<p class="themeDesc">', theme.desc, '</p>',
+            '<div class="badgeRow"><span class="badge lock">準備中</span></div>',
+          '</button>'
+        ].join("");
+      }).join("");
+
+      grid.querySelectorAll(".themeCard").forEach(function(card){
+        if(card.dataset.locked === "true"){
+          card.addEventListener("click", function(){
+            lockMessage.style.display = "block";
+            lockMessage.textContent = "「" + card.dataset.themeName + "」は現在準備中です。無料版では、表示されている無料テーマのみ利用できます。";
+          });
+          return;
+        }
+
+        card.addEventListener("click", function(){
+          lockMessage.style.display = "none";
+          var themeId = card.dataset.themeId;
+          var theme = THEMES.find(function(item){ return item.id === themeId; });
+          state.themeId = themeId;
+          state.themeName = theme ? theme.name : "";
+          hide($("#step0"));
+          show($("#step1"));
+        });
+      });
+    }
+
+    function renderOverview(){
+      var list = (THEME_TEXT[state.themeId] && THEME_TEXT[state.themeId].overview) || [
+        { title: "今の空気", text: "今は全体の流れを落ち着いて見極める時期です。" },
+        { title: "進みやすい形", text: "感情よりも整ったやり取りが鍵になります。" },
+        { title: "無料版の見どころ", text: "今の状況と今後の一手を整理します。" }
+      ];
+
+      $("#overviewGrid").innerHTML = list.map(function(item){
+        return [
+          '<div class="summaryBox">',
+            '<h3>', item.title, '</h3>',
+            '<p>', item.text, '</p>',
+          '</div>'
+        ].join("");
+      }).join("");
+    }
+
+    function renderFinal(cardKey){
+      var reading = CARD_RESULTS[cardKey];
+      var finalLead = [
+        "テーマ: " + state.themeName,
+        "関係性: " + state.rel,
+        state.timing ? "いま気になること: " + state.timing : "",
+        "",
+        "今回のカードは「" + reading.tone + "」を示しています。"
+      ].filter(Boolean).join("\n");
+
+      $("#finalTitle").textContent = state.themeName + "の無料鑑定結果";
+      $("#finalLead").textContent = finalLead;
+
+      var extras = state.memo
+        ? "補足メモから見ると、「" + state.memo + "」という気がかりは、すぐ答えを出すより流れを整えていく方が合っています。"
+        : "今は気持ちを急いで決めるより、流れを見ながら一手ずつ整える方が結果につながりやすいです。";
+
+      $("#resultGrid").innerHTML = [
+        { title: "現状", text: reading.now },
+        { title: "過去", text: reading.past },
+        { title: "未来（近未来）", text: reading.future },
+        { title: "今後どうすればいいか", text: reading.next },
+        { title: "今回の補足", text: extras }
+      ].map(function(item){
+        return [
+          '<div class="summaryBox">',
+            '<h3>', item.title, '</h3>',
+            '<p>', item.text, '</p>',
+          '</div>'
+        ].join("");
+      }).join("");
+    }
+
+    $("#backToThemesBtn").addEventListener("click", function(){
+      hide($("#step1"));
+      show($("#step0"));
+    });
+
+    $("#startBtn").addEventListener("click", function(){
+      state.rel = $("#rel").value;
+      state.timing = $("#timing").value.trim();
+      state.memo = $("#memo").value.trim();
+
+      hide($("#step1"));
+      show($("#step2"));
+
+      setTimeout(function(){
+        hide($("#step2"));
+        renderOverview();
+        show($("#step3"));
+      }, 900);
+    });
+
+    $("#backToFormBtn").addEventListener("click", function(){
+      hide($("#step3"));
+      show($("#step1"));
+    });
+
+    $("#toCardsBtn").addEventListener("click", function(){
+      hide($("#step3"));
+      show($("#step4"));
+    });
+
+    $("#backToOverviewBtn").addEventListener("click", function(){
+      hide($("#step4"));
+      show($("#step3"));
+    });
+
+    document.querySelectorAll(".cardBtn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        document.querySelectorAll(".cardBtn").forEach(function(item){
+          item.setAttribute("aria-pressed", "false");
+        });
+        btn.setAttribute("aria-pressed", "true");
+
+        state.card = btn.dataset.card;
+        renderFinal(state.card);
+
+        hide($("#step4"));
+        show($("#step5"));
+      });
+    });
+
+    $("#restartBtn").addEventListener("click", function(){
+      state = {
+        themeId: null,
+        themeName: "",
+        rel: "",
+        timing: "",
+        memo: "",
+        card: ""
+      };
+
+      $("#rel").value = "片想い";
+      $("#timing").value = "";
+      $("#bdYou").value = "";
+      $("#bdThem").value = "";
+      $("#memo").value = "";
+
+      document.querySelectorAll(".cardBtn").forEach(function(item){
+        item.setAttribute("aria-pressed", "false");
+      });
+
+      hide($("#step1"));
+      hide($("#step2"));
+      hide($("#step3"));
+      hide($("#step4"));
+      hide($("#step5"));
+      show($("#step0"));
+    });
+
+    renderThemes();
+  </script>
+</body>
+</html>
