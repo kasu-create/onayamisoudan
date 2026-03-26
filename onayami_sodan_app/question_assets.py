@@ -14,6 +14,11 @@ ROOT = Path(__file__).resolve().parent
 QUESTIONS_CSV = ROOT / "questions_box.csv"
 EXPORT_DIR = ROOT / "exports" / "question_images"
 
+# Google Sheets 公開CSV URL（お悩み相談データ）
+GOOGLE_SHEET_ID = "18-_rNCncpt2LbvxZ-auHmnvNPHUyn9n9F37x42_eQwk"
+GOOGLE_SHEET_GID = "1908512133"
+GOOGLE_SHEET_CSV_URL = f"https://docs.google.com/spreadsheets/d/{GOOGLE_SHEET_ID}/export?format=csv&gid={GOOGLE_SHEET_GID}"
+
 COLUMNS = [
     "id",
     "display_name",
@@ -24,6 +29,15 @@ COLUMNS = [
     "question",
     "created_at",
 ]
+
+# Google Forms の列名 → 内部列名 のマッピング
+GFORM_COLUMN_MAP = {
+    "タイムスタンプ": "created_at",
+    "名前（偽名でもOK）": "display_name",
+    "自分の生年月日（8桁）": "you_birth",
+    "相手の生年月日（8桁・不明なら空欄）": "them_birth",
+    "悩み": "question",
+}
 
 DEFAULT_QUESTION = {
     "id": 0,
@@ -45,12 +59,36 @@ FONT_CANDIDATES = [
 
 
 def load_questions() -> pd.DataFrame:
+    """ローカルCSVから読み込む（旧方式・フォールバック用）"""
     if not QUESTIONS_CSV.exists():
         return pd.DataFrame(columns=COLUMNS)
     df = pd.read_csv(QUESTIONS_CSV)
     for column in COLUMNS:
         if column not in df.columns:
             df[column] = ""
+    return df[COLUMNS]
+
+
+def load_questions_from_gsheet() -> pd.DataFrame:
+    """Google Sheets（Forms連携）からデータを読み込む"""
+    try:
+        df = pd.read_csv(GOOGLE_SHEET_CSV_URL)
+    except Exception as e:
+        print(f"[WARN] Google Sheets 読み込み失敗: {e}")
+        return pd.DataFrame(columns=COLUMNS)
+
+    # 列名を内部形式にリネーム
+    df = df.rename(columns=GFORM_COLUMN_MAP)
+
+    # 必要な列がなければ追加
+    for col in COLUMNS:
+        if col not in df.columns:
+            df[col] = ""
+
+    # id列を自動生成（行番号ベース）
+    df["id"] = range(1, len(df) + 1)
+
+    # 不要な列を除外して返す
     return df[COLUMNS]
 
 
