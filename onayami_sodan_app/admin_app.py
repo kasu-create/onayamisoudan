@@ -13,6 +13,7 @@ from question_assets import (
     question_image_bytes,
 )
 from tarot_fortune import detect_theme, perform_reading
+from gpt_fortune import perform_gpt_reading
 
 
 def preview_image(png_bytes: bytes) -> Image.Image:
@@ -303,6 +304,136 @@ def main() -> None:
                 st.rerun()
         else:
             st.info("左の「この悩みを鑑定する」ボタンを押すと、タロットカードで鑑定結果が表示されます。")
+
+    # ==================== GPT鑑定セクション ====================
+    st.markdown("---")
+    st.header("🤖 GPT鑑定（AI占い師）")
+    st.caption("GPTsと同じプロンプトで、AIが本格的な恋愛鑑定を行います。画面録画で動画素材に。")
+
+    # APIキー入力
+    api_key = st.text_input(
+        "OpenAI API Key",
+        type="password",
+        placeholder="sk-...",
+        help="OpenAI APIキーを入力してください。入力内容は保存されません。",
+        key="openai_api_key"
+    )
+
+    gpt_col1, gpt_col2 = st.columns([1, 2])
+
+    with gpt_col1:
+        gpt_label = st.selectbox(
+            "GPT鑑定する相談を選択",
+            labels,
+            index=default_index,
+            key="gpt_select"
+        )
+        gpt_id = id_map[gpt_label]
+        gpt_row = df.loc[df["id"].astype(int) == gpt_id].iloc[0]
+        gpt_data = question_from_row(gpt_row)
+        
+        # テーマ自動判定
+        gpt_theme = detect_theme(str(gpt_data.get("question", "")))
+        st.markdown(f'<div class="theme-badge">テーマ: {gpt_theme}</div>', unsafe_allow_html=True)
+        
+        st.markdown(
+            f"""
+            <div class="list-card">
+                <div class="name">{gpt_data['display_name']}</div>
+                <div class="question">{gpt_data['question']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        
+        # モデル選択
+        gpt_model = st.selectbox(
+            "使用モデル",
+            ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
+            index=0,
+            help="gpt-4o-miniが最もコスパ良。gpt-4oは高品質だがコスト高。"
+        )
+        
+        if st.button("🔮 GPTで鑑定する", type="primary", use_container_width=True, disabled=not api_key):
+            if not api_key:
+                st.error("APIキーを入力してください。")
+            else:
+                with st.spinner("GPTが鑑定中... ✨"):
+                    try:
+                        result = perform_gpt_reading(
+                            api_key=api_key,
+                            question=str(gpt_data.get("question", "")),
+                            theme=gpt_theme,
+                            model=gpt_model
+                        )
+                        st.session_state["gpt_reading"] = result
+                        st.session_state["gpt_for_id"] = gpt_id
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"エラーが発生しました: {e}")
+        
+        if not api_key:
+            st.warning("APIキーを入力すると鑑定できます。")
+
+    with gpt_col2:
+        # GPT鑑定結果の表示
+        if "gpt_reading" in st.session_state and st.session_state.get("gpt_for_id") == gpt_id:
+            result = st.session_state["gpt_reading"]
+            
+            st.markdown(f'<div class="theme-badge">🔮 {result["theme"]} のGPT鑑定結果</div>', unsafe_allow_html=True)
+            
+            # 引いたカード情報
+            main_card = result["main_card"]
+            st.markdown(
+                f"""
+                <div class="tarot-card" style="text-align: left;">
+                    <div class="tarot-position">本鑑定カード</div>
+                    <div class="tarot-name">{main_card['name_jp']}</div>
+                    <div class="tarot-meaning">{main_card['meaning']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            
+            # おまけ鑑定カード
+            st.markdown("**おまけ鑑定カード（過去・現在・未来）**")
+            sub_cols = st.columns(3)
+            for i, (pos, card) in enumerate(zip(["過去", "現在", "未来"], result["sub_cards"])):
+                with sub_cols[i]:
+                    st.markdown(
+                        f"""
+                        <div class="tarot-card" style="padding: 12px;">
+                            <div class="tarot-position">{pos}</div>
+                            <div class="tarot-name" style="font-size: 1rem;">{card['name_jp']}</div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+            
+            # 鑑定結果テキスト
+            st.markdown("---")
+            st.markdown(result["reading"])
+            
+            # トークン使用量
+            usage = result.get("usage", {})
+            st.caption(f"使用トークン: {usage.get('total_tokens', 'N/A')} tokens（モデル: {result.get('model', 'N/A')}）")
+            
+            # 再鑑定ボタン
+            if st.button("🔄 もう一度GPT鑑定する", use_container_width=True):
+                with st.spinner("GPTが鑑定中... ✨"):
+                    try:
+                        result = perform_gpt_reading(
+                            api_key=api_key,
+                            question=str(gpt_data.get("question", "")),
+                            theme=gpt_theme,
+                            model=gpt_model
+                        )
+                        st.session_state["gpt_reading"] = result
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"エラーが発生しました: {e}")
+        else:
+            st.info("左の「GPTで鑑定する」ボタンを押すと、AIが本格的な鑑定結果を生成します。")
 
 
 main()
