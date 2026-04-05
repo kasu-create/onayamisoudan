@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>どこで売るか — チャネル選定とコピペ</title>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --card: #151b26;
+      --line: #2a3544;
+      --text: #eef3f8;
+      --sub: #8fa3b8;
+      --accent: #4d9fff;
+      --ok: #3dd68c;
+      --warn: #e0a82e;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; font-size: 14px; }
+    header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); background: var(--card); }
+    h1 { margin: 0 0 0.35rem; font-size: 1.2rem; }
+    .sub { margin: 0; color: var(--sub); font-size: 0.85rem; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
+    .warn-box {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(224, 168, 46, 0.4);
+      background: rgba(224, 168, 46, 0.08);
+      color: var(--sub);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .nav { margin-bottom: 1rem; font-size: 0.85rem; }
+    .nav a { color: var(--accent); }
+    h2 { font-size: 1rem; margin: 1.5rem 0 0.6rem; color: var(--ok); }
+    table.ch { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    table.ch th, table.ch td { border-bottom: 1px solid var(--line); padding: 0.5rem 0.4rem; text-align: left; vertical-align: top; }
+    table.ch th { color: var(--sub); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; }
+    table.ch a { color: var(--accent); }
+    label { color: var(--sub); font-size: 0.75rem; }
+    input#q {
+      width: 100%; max-width: 420px; margin: 0.5rem 0 1rem;
+      padding: 0.45rem 0.55rem; border-radius: 6px; border: 1px solid var(--line);
+      background: var(--bg); color: var(--text);
+    }
+    .idea-row { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; align-items: baseline; padding: 0.35rem 0; border-bottom: 1px solid var(--line); font-size: 0.82rem; }
+    .idea-row a.btn-kit {
+      margin-left: auto;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      background: var(--ok);
+      color: #061018;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    .idea-row.hidden { display: none; }
+    .cat { color: var(--accent); }
+    code { font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>どのサイトで売るか — 選定ガイド</h1>
+    <p class="sub">下の表は用途別のおすすめ。商品を選ぶと、<strong>サイト別のタイトル・本文がコピペ用に出ます</strong>（→ 各サイトに貼って、共有ページURLで申込まで）。</p>
+  </header>
+  <div class="wrap">
+    <div class="nav">
+      <a href="{{ url_for('index') }}">トップ</a>
+      · <a href="{{ url_for('catalog_page') }}">月額プラン一覧</a>
+    </div>
+    <div class="warn-box">{{ disclaimer }}</div>
+
+    <h2>1. チャネル一覧（選定の目安）</h2>
+    <table class="ch">
+      <thead>
+        <tr>
+          <th>サイト</th>
+          <th>使い方</th>
+          <th>相性が出やすいテーマ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ch in channels %}
+        <tr>
+          <td>
+            <strong>{{ ch.name }}</strong>
+            {% if ch.url %}<br /><a href="{{ ch.url }}" rel="noopener noreferrer" target="_blank">公式を開く</a>{% endif %}
+          </td>
+          <td>{{ ch.role }}</td>
+          <td>{{ ch.fit }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>2. 商品を選んでコピペキットを開く</h2>
+    <p class="sub" style="margin-bottom:0.5rem;">キーワードで絞り込み →「コピペキット」でチャネル別文案が一画面に出ます。</p>
+    <label for="q">検索（No・カテゴリ・題名）</label>
+    <input type="search" id="q" placeholder="例: 11 士業 税理士" autocomplete="off" />
+    <div id="ideas">
+      {% for it in ideas %}
+      <div class="idea-row" data-hay="{{ it.id }} {{ it.category }} {{ it.title }}">
+        <span class="cat">#{{ it.id }}</span>
+        <span>{{ it.category }}</span>
+        <span>{{ it.title }}</span>
+        <a class="btn-kit" href="{{ url_for('sell_idea_page', idea_id=it.id) }}">コピペキット</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <script>
+(function () {
+  var q = document.getElementById("q");
+  var ideas = document.getElementById("ideas");
+  function norm(s) { return (s || "").toLowerCase(); }
+  function apply() {
+    var t = norm(q.value);
+    ideas.querySelectorAll(".idea-row").forEach(function (row) {
+      var hay = norm(row.getAttribute("data-hay"));
+      row.classList.toggle("hidden", t && hay.indexOf(t) === -1);
+    });
+  }
+  q.addEventListener("input", apply);
+})();
+  </script>
+</body>
+</html>

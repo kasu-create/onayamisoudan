@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>チェックアウトをキャンセルしました</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif;
+      background: #0c0f14;
+      color: #eef3f8;
+      line-height: 1.6;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+    a { color: #4d9fff; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 style="font-size:1.25rem;">チェックアウトをキャンセルしました</h1>
+    <p style="color:#8fa3b8;">課金は行われていません。再度ご検討いただく場合はトップからお進みください。</p>
+    <p><a href="{{ url_for('index') }}">トップへ戻る</a></p>
+  </div>
+</body>
+</html>

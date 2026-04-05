@@ -8,8 +8,12 @@ config.yaml
 secrets/
 accounts/
 *.json
+# 収益サーバー用カタログはリポジトリに含める（Render デプロイに必須）
+!tools/revenue/ideas_catalog.json
+!tools/revenue/channel_playbook.json
 quota_usage.json
 upload_queue.csv
 __pycache__/
 .env
+tools/revenue/.env
 *.pyc

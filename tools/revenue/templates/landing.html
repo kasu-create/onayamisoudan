@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ニッチSaaS — 月額プラン＆リサーチパック</title>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --card: #151b26;
+      --line: #2a3544;
+      --text: #eef3f8;
+      --sub: #8fa3b8;
+      --accent: #4d9fff;
+      --ok: #3dd68c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    h1 { font-size: 1.65rem; margin: 0 0 0.5rem; letter-spacing: 0.02em; }
+    .lead { color: var(--sub); margin: 0 0 1.25rem; font-size: 0.98rem; }
+    .notice {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(77, 159, 255, 0.08);
+      color: var(--sub);
+      font-size: 0.88rem;
+      margin-bottom: 1.5rem;
+    }
+    .notice strong { color: var(--accent); }
+    .hero-store {
+      border: 1px solid rgba(61, 214, 140, 0.35);
+      border-radius: 14px;
+      padding: 1.35rem 1.25rem 1.25rem;
+      background: rgba(61, 214, 140, 0.07);
+      margin-bottom: 1.75rem;
+    }
+    .hero-store h2 { margin: 0 0 0.5rem; font-size: 1.12rem; color: var(--ok); }
+    .hero-store p { margin: 0 0 1rem; color: var(--sub); font-size: 0.9rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+    .btn-hero {
+      display: inline-block;
+      text-align: center;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.95rem;
+      border: 1px solid transparent;
+    }
+    .btn-hero-primary { background: var(--ok); color: #061018; }
+    .btn-hero-primary:hover { filter: brightness(1.06); }
+    .btn-hero-outline { border-color: var(--line); color: var(--text); background: transparent; }
+    .hero-meta { font-size: 0.8rem; color: var(--sub); margin-top: 0.85rem; }
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin: 2rem 0 0.75rem;
+    }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1.25rem 1.2rem;
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+    }
+    .card h2 { font-size: 1.05rem; margin: 0 0 0.35rem; }
+    .price { font-size: 1.35rem; font-weight: 700; color: var(--ok); margin: 0.25rem 0 0.6rem; }
+    .card ul { margin: 0 0 1rem; padding-left: 1.1rem; color: var(--sub); font-size: 0.88rem; }
+    .btn {
+      display: inline-block;
+      margin-top: auto;
+      text-align: center;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.92rem;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--accent); color: #061018; }
+    .btn-primary:hover { filter: brightness(1.06); }
+    .btn[disabled], .btn.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+      background: #3a4a5e;
+      color: #9aaaba;
+    }
+    .btn-outline { border-color: var(--line); color: var(--text); background: transparent; }
+    footer { margin-top: 2.5rem; font-size: 0.78rem; color: var(--sub); }
+    a { color: var(--accent); }
+    code { font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="section-label" style="margin-top:0;">Niche SaaS ideas</p>
+    <h1>課題に合うアイデアを、<strong>必要な分だけ</strong>月額で</h1>
+    <p class="lead">
+      士業・医療・不動産・採用など、<strong>テーマごとの案をそれぞれ独立した月額プラン</strong>として用意しています。
+      一覧では<strong>題名と業種が先</strong>に来るので、「巨大な連番リストの一つ」ではなく、<strong>そのカード単体の商品</strong>として見えやすい並びにしています。
+      数値で比較したいときは表形式の画面へどうぞ。
+    </p>
+
+    <div class="hero-store">
+      <h2>月額プラン一覧</h2>
+      <p>
+        気になるテーマだけを選び、Stripe の安全な決済画面からお申し込みいただけます。
+        目安の月額: <strong>¥{{ "{:,}".format(default_monthly_jpy) }}</strong> 〜（プランにより異なります）。
+      </p>
+      <div class="hero-actions">
+        <a class="btn-hero btn-hero-primary" href="{{ url_for('catalog_page') }}">一覧を見る</a>
+        <a class="btn-hero btn-hero-outline" href="{{ url_for('dashboard') }}">スコアで比較する</a>
+      </div>
+      {% if not catalog_checkout_ok %}
+      <p class="hero-meta" style="color:#c9a227;">
+        ※ 現在、オンライン決済の準備中です。しばらくしてからお試しください。
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="notice">
+      <strong>運営者向け・購入後の自動連携（任意）:</strong>
+      Stripe で <code>{{ request.url_root }}webhooks/stripe</code> を登録し、
+      <code>STRIPE_WEBHOOK_SECRET</code> と <code>FULFILLMENT_WEBHOOK_URL</code> を設定すると、個別プランの決済完了時に外部へ通知できます。
+      手順は <code>tools/revenue/stripe_setup.txt</code> の「J2」。
+    </div>
+
+    {% if not stripe_ready %}
+    <div class="notice">
+      <strong>下のパックのボタンが灰のとき:</strong>
+      <code>tools/revenue/env.local.example</code> をコピーして <code>tools/revenue/.env</code> にリネームし、
+      <code>STRIPE_SECRET_KEY</code> と3つの <code>STRIPE_PRICE_*</code> を書いて保存。
+      サーバー（<code>py server.py</code>）を<strong>止めて付け直す</strong>。
+    </div>
+    {% endif %}
+
+    <p class="section-label">Bundle（任意・パック販売）</p>
+    <p class="lead" style="margin-bottom:1rem;">
+      まとめて資料として受け取りたい方向け。個別の月額プランとは別のお支払いになります。
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>ライト</h2>
+        <p class="price">¥9,800 <span style="font-size:0.75rem;color:var(--sub);font-weight:400;">（税込・例）</span></p>
+        <ul>
+          <li>スコアリング済みデータの利用権</li>
+          <li>ブラウザで検索・並替・CSV出力</li>
+          <li>継続パターン・おすすめタグ同梱</li>
+        </ul>
+        {% if stripe_ready and has_light %}
+        <a class="btn btn-primary" href="{{ url_for('checkout', plan='light') }}">購入する</a>
+        {% else %}
+        <span class="btn btn-primary disabled">Stripe未設定</span>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>スタンダード</h2>
+        <p class="price">¥49,800 <span style="font-size:0.75rem;color:var(--sub);font-weight:400;">（税込・例）</span></p>
+        <ul>
+          <li>ライトの内容一式</li>
+          <li>優先2案の「MVP画面ワイヤー」テキストレビュー1回（非同期）</li>
+          <li>初月5万円の切り口（型A/B/C）テンプレ同梱</li>
+        </ul>
+        {% if stripe_ready and has_standard %}
+        <a class="btn btn-primary" href="{{ url_for('checkout', plan='standard') }}">購入する</a>
+        {% else %}
+        <span class="btn btn-primary disabled">Stripe未設定</span>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>伴走（月額）</h2>
+        <p class="price">¥20,000~/月 <span style="font-size:0.75rem;color:var(--sub);font-weight:400;">（税込・例）</span></p>
+        <ul>
+          <li>優先順位の毎月アップデート</li>
+          <li>1案に絞った仕様すり合わせ（チャット30分/月）</li>
+        </ul>
+        {% if stripe_ready and has_retainer %}
+        <a class="btn btn-outline" href="{{ url_for('checkout', plan='retainer') }}">サブスクで始める</a>
+        {% else %}
+        <span class="btn btn-outline disabled">Stripe未設定</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <p style="margin-top:1.5rem;font-size:0.85rem;color:var(--sub);">
+      パックの金額は Stripe の Price に合わせてください。上記はランディング表示の目安です。
+    </p>
+
+    <footer>
+      <a href="{{ url_for('sell_hub') }}">どこで売るか（コピペ）</a>
+      · <a href="{{ url_for('catalog_page') }}">月額プラン一覧</a>
+      · <a href="{{ url_for('dashboard') }}">スコアで比較</a>
+    </footer>
+  </div>
+</body>
+</html>

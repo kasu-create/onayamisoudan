@@ -1,0 +1,46 @@
+ニッチSaaS収益化ツール — あなたがやること（チェックリスト）
+====================================================
+
+■ 日常の起動
+  cd tools\revenue
+  py server.py
+  ブラウザ: http://127.0.0.1:5000/
+  - ランディング: /（100 SKU の商品ストアがメイン導線）
+  - 商品一覧（同一画面）: /store または /products または /catalog
+  - 一覧ダッシュボード: /dashboard （データは /api/ideas ＝ ideas_catalog.json）
+  - ダッシュのJS本体: /assets/niche_dashboard.js（同じサーバー必須。file:// 直開きは不可）
+
+■ 購入後の自動連携（任意）
+  - .env: STRIPE_WEBHOOK_SECRET, FULFILLMENT_WEBHOOK_URL
+  - Stripe にエンドポイント POST .../webhooks/stripe（checkout.session.completed）
+  - 詳細: stripe_setup.txt の「J2」
+
+■ 秘密情報
+  - tools/revenue/.env に STRIPE_SECRET_KEY 等（Git に載せない）
+  - チャット等に流したらテストキーは Stripe で再発行推奨
+
+■ カタログ・金額の更新
+  - 正本: tools/revenue/ideas_catalog.json
+  - 新しい案を ideas に追加、バッジ用は meta（top20 / priority / low_competition / patterns）を必要に応じて更新
+  - 詳細: ideas_catalog_HOWTO.txt
+  - 既定月額: default_monthly_jpy または環境変数 IDEA_DEFAULT_MONTHLY_JPY、個別は各案の monthly_jpy
+  - 変更後はサーバー再起動
+
+■ Stripe（パック3 + 個別サブスク）
+  - パック: STRIPE_PRICE_LIGHT / STANDARD / RETAINER（Products で事前作成）
+  - 個別案: /checkout/idea/<id> は Checkout 時に price_data で動的生成（100個の Price を先に作る必要はない）
+  - テストカード: 4242 4242 4242 4242（他はテストモードの公式リスト参照）
+  - セットアップ手順の補足: stripe_setup.txt
+
+■ 本番に出す（ファイル追加済み）
+  - 手順の全体像: tools/revenue/DEPLOY.txt
+  - 依存: tools/revenue/requirements.txt（gunicorn 含む）
+  - Docker: リポジトリ直下 Dockerfile（docker build -t niche-revenue .）
+  - Render 例: リポジトリ直下 render.yaml または DEPLOY.txt の Start コマンド
+  - 環境変数例: tools/revenue/env.production.example
+  - 必ず設定: PUBLIC_BASE_URL（https・末尾スラッシュなし）、STRIPE_SECRET_KEY、FLASK_SECRET_KEY
+  - その他: Live 鍵・パック用 Live Price、特商法などの表記、Webhook の有無、ダッシュボード公開範囲は自分で判断
+
+■ 参考
+  - 簡易起動バッチ: tools/start_revenue_server.bat
+  - 動作確認: GET /health （stripe, ideas_count, default_monthly_jpy）

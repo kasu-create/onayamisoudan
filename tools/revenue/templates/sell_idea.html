@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>コピペ販売キット — #{{ idea_id }} {{ title }}</title>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --card: #151b26;
+      --line: #2a3544;
+      --text: #eef3f8;
+      --sub: #8fa3b8;
+      --accent: #4d9fff;
+      --ok: #3dd68c;
+      --warn: #e0a82e;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; font-size: 14px; }
+    header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); background: var(--card); }
+    h1 { margin: 0 0 0.25rem; font-size: 1.1rem; line-height: 1.35; }
+    .meta { margin: 0; color: var(--sub); font-size: 0.82rem; }
+    .wrap { max-width: 800px; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
+    .nav { margin-bottom: 1rem; font-size: 0.85rem; }
+    .nav a { color: var(--accent); }
+    .sticky {
+      position: sticky; top: 0; z-index: 2;
+      background: var(--bg);
+      padding: 0.75rem 0 0.5rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 1rem;
+    }
+    .warn-box {
+      padding: 0.75rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid rgba(224, 168, 46, 0.35);
+      background: rgba(224, 168, 46, 0.07);
+      color: var(--sub);
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+    label { display: block; font-size: 0.68rem; color: var(--sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    input.f, textarea.f {
+      width: 100%; padding: 0.45rem 0.5rem; border-radius: 8px; border: 1px solid var(--line);
+      background: #0a0d12; color: var(--text); font-size: 0.82rem; font-family: inherit;
+    }
+    textarea.f { min-height: 5rem; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.3rem 0 0.75rem; }
+    button.cp {
+      padding: 0.35rem 0.65rem; border-radius: 8px; border: 1px solid var(--line);
+      background: var(--card); color: var(--text); cursor: pointer; font-size: 0.78rem;
+    }
+    button.cp:hover { border-color: var(--accent); }
+    .kit {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1rem 1.1rem;
+      background: var(--card);
+      margin-bottom: 1rem;
+    }
+    .kit h2 { margin: 0 0 0.35rem; font-size: 0.98rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+    .badge {
+      font-size: 0.65rem; font-weight: 700;
+      padding: 0.15rem 0.4rem; border-radius: 4px;
+      background: rgba(61, 214, 140, 0.25); color: var(--ok);
+    }
+    .score { font-size: 0.72rem; color: var(--sub); font-weight: 400; }
+    .kit .role { color: var(--sub); font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .kit .fit { font-size: 0.78rem; color: var(--accent); margin-bottom: 0.65rem; }
+    .steps { margin: 0 0 0.75rem; padding-left: 1.1rem; color: var(--sub); font-size: 0.78rem; }
+    .steps li { margin-bottom: 0.25rem; }
+    .kit a.ext { color: var(--accent); font-size: 0.82rem; }
+    code { font-size: 0.85em; }
+    .actions-top { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .actions-top a {
+      padding: 0.45rem 0.75rem; border-radius: 8px; font-weight: 700; font-size: 0.82rem; text-decoration: none;
+    }
+    .a-open { background: var(--accent); color: #061018; }
+    .a-pay { background: var(--ok); color: #061018; }
+    .a-pay.disabled { opacity: 0.45; pointer-events: none; background: #3a4a5e; color: #9aaaba; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>コピペ販売キット</h1>
+    <p class="meta">{{ category }} · #{{ idea_id }} · 月額目安 ¥{{ "{:,}".format(monthly_jpy) }}</p>
+  </header>
+  <div class="wrap">
+    <div class="nav">
+      <a href="{{ url_for('sell_hub') }}">← チャネル選定トップ</a>
+      · <a href="{{ url_for('product_page', idea_id=idea_id) }}">共有ページ</a>
+    </div>
+
+    <div class="sticky">
+      <div class="warn-box">{{ disclaimer }}</div>
+      <p style="margin:0 0 0.5rem;font-size:0.85rem;color:var(--sub);">
+        まず共有ページURLを案件・出品文に貼り、<strong>下のチャネル別「タイトル」「本文」</strong>をそのサイトにコピペ。購入者は共有ページから Stripe で決済します。
+      </p>
+      <label for="u-page">共有ページURL（商品説明に貼る）</label>
+      <input id="u-page" class="f" type="text" readonly value="{{ page_url }}" />
+      <div class="row"><button type="button" class="cp" data-copy="u-page">URLをコピー</button></div>
+      {% if stripe_ideas_ok %}
+      <label for="u-co">直接Checkout URL（使うサイトだけ。規約で禁止なら使わない）</label>
+      <input id="u-co" class="f" type="text" readonly value="{{ checkout_full_url }}" />
+      <div class="row"><button type="button" class="cp" data-copy="u-co">Checkout URLをコピー</button></div>
+      {% endif %}
+      <div class="actions-top">
+        <a class="a-open" href="{{ page_url }}" target="_blank" rel="noopener">共有ページを開く</a>
+        {% if stripe_ideas_ok %}
+        <a class="a-pay" href="{{ checkout_full_url }}">テストで決済画面へ</a>
+        {% else %}
+        <span class="a-pay disabled">Stripe未設定</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <p style="font-size:0.8rem;color:var(--sub);margin:0 0 0.75rem;">
+      API: <code>/api/idea/{{ idea_id }}/sell-kit</code>（スクリプト連携用）
+    </p>
+
+    {% for k in kits %}
+    <div class="kit" id="ch-{{ k.id }}">
+      <h2>
+        {{ k.name }}
+        {% if k.highlight %}<span class="badge">この商品とは相性高め</span>{% endif %}
+        <span class="score">マッチ度 {{ k.score }}（目安）</span>
+      </h2>
+      <p class="role">{{ k.role }}</p>
+      <p class="fit">{{ k.fit }}</p>
+      {% if k.url %}
+      <p><a class="ext" href="{{ k.url }}" target="_blank" rel="noopener noreferrer">{{ k.name }}を開く</a></p>
+      {% endif %}
+      {% if k.steps %}
+      <ol class="steps">
+        {% for s in k.steps %}<li>{{ s }}</li>{% endfor %}
+      </ol>
+      {% endif %}
+      <label for="t-{{ k.id }}">貼り付け用・タイトル案</label>
+      <textarea id="t-{{ k.id }}" class="f" style="min-height:3.2rem;" readonly>{{ k.post_title }}</textarea>
+      <div class="row"><button type="button" class="cp" data-copy="t-{{ k.id }}">タイトルをコピー</button></div>
+      <label for="b-{{ k.id }}">貼り付け用・本文</label>
+      <textarea id="b-{{ k.id }}" class="f" style="min-height:14rem;" readonly>{{ k.post_body }}</textarea>
+      <div class="row"><button type="button" class="cp" data-copy="b-{{ k.id }}">本文をコピー</button></div>
+    </div>
+    {% endfor %}
+  </div>
+  <script>
+(function () {
+  document.querySelectorAll("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-copy");
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.focus();
+      el.select();
+      try {
+        document.execCommand("copy");
+        var o = btn.textContent;
+        btn.textContent = "コピーしました";
+        setTimeout(function () { btn.textContent = o; }, 1200);
+      } catch (e) {}
+    });
+  });
+})();
+  </script>
+</body>
+</html>

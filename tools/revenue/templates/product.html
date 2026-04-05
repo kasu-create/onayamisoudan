@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }} — 月額プラン</title>
+  <meta name="description" content="{{ og_desc }}" />
+  <meta property="og:title" content="{{ title }}" />
+  <meta property="og:description" content="{{ og_desc }}" />
+  <meta property="og:type" content="website" />
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --card: #151b26;
+      --line: #2a3544;
+      --text: #eef3f8;
+      --sub: #8fa3b8;
+      --accent: #4d9fff;
+      --ok: #3dd68c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    header {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--card);
+    }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 1.25rem 1rem 2.5rem; }
+    .cat { color: var(--accent); font-size: 0.82rem; margin-bottom: 0.35rem; }
+    h1 { font-size: 1.25rem; margin: 0 0 1rem; line-height: 1.35; }
+    .meta { color: var(--sub); font-size: 0.88rem; margin-bottom: 1.25rem; }
+    .price { font-size: 1.2rem; font-weight: 700; color: var(--ok); margin-bottom: 1rem; }
+    .btn {
+      display: inline-block;
+      text-align: center;
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      background: var(--ok);
+      color: #061018;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn.disabled { opacity: 0.45; pointer-events: none; background: #3a4a5e; color: #9aaaba; }
+    .box {
+      margin-top: 1.75rem;
+      padding: 1rem 1.05rem;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--card);
+    }
+    .box h2 { margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text); }
+    .box p { margin: 0 0 0.75rem; color: var(--sub); font-size: 0.82rem; }
+    label { display: block; font-size: 0.72rem; color: var(--sub); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    input.url-field, textarea.copy-field {
+      width: 100%;
+      padding: 0.5rem 0.55rem;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+    textarea.copy-field { min-height: 9rem; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.35rem; }
+    button.copy-btn {
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #1a2332;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    button.copy-btn:hover { border-color: var(--accent); }
+    .nav { margin-top: 1.5rem; font-size: 0.82rem; }
+    .nav a { color: var(--accent); }
+    .fine { font-size: 0.78rem; color: var(--sub); margin-top: 0.75rem; }
+    code { font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap" style="padding-top:0.75rem;padding-bottom:0.75rem;">
+      <div class="cat">{{ category }}</div>
+      <h1 style="margin:0;font-size:1.1rem;">{{ title }}</h1>
+    </div>
+  </header>
+  <div class="wrap">
+    <p class="meta">
+      売りやすさ {{ sell }} · 競争の薄さ {{ comp }} · 継続化 {{ recur }} · 計 {{ total }}
+    </p>
+    <p class="price">月額（目安）¥{{ "{:,}".format(monthly_jpy) }}</p>
+    {% if stripe_ideas_ok %}
+    <a class="btn" href="{{ url_for('checkout_idea', idea_id=idea_id) }}">このプランで申し込む</a>
+    {% else %}
+    <span class="btn disabled">決済の準備中</span>
+    {% endif %}
+
+    <div class="box">
+      <h2>フリーランス案件サイト・SNS に貼る</h2>
+      <p>
+        <a href="https://freelance-start.com/jobs" rel="noopener noreferrer">フリーランススタート</a> などは<strong>手動で案件を作成</strong>し、本文に次のURLや下の文章を貼ります（当サイトから自動出品するAPIはありません）。
+      </p>
+      <label for="shareUrl">この商品の共有URL（クリーン・トラッキングなし）</label>
+      <input id="shareUrl" class="url-field" type="text" readonly value="{{ share_url }}" />
+      <div class="row">
+        <button type="button" class="copy-btn" data-copy-target="shareUrl">URLをコピー</button>
+      </div>
+      <label for="listingText" style="margin-top:1rem;">案件説明のたたき台（そのままコピー可）</label>
+      <textarea id="listingText" class="copy-field" readonly>{{ listing_text }}</textarea>
+      <div class="row">
+        <button type="button" class="copy-btn" data-copy-target="listingText">文章をコピー</button>
+      </div>
+      <p class="fine">
+        自動取得用JSON: <code>/api/idea/{{ idea_id }}/share</code>（自前スクリプトやスプレッドシート連携向け）
+      </p>
+    </div>
+
+    <div class="nav">
+      <a href="{{ url_for('sell_idea_page', idea_id=idea_id) }}" style="color:var(--ok);font-weight:600;">チャネル選定・コピペキット</a>
+      · <a href="{{ url_for('catalog_page') }}">← 月額プラン一覧</a>
+      · <a href="{{ url_for('index') }}">トップ</a>
+    </div>
+  </div>
+  <script>
+(function () {
+  document.querySelectorAll("[data-copy-target]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-copy-target");
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.focus();
+      el.select();
+      try {
+        document.execCommand("copy");
+        var t = btn.textContent;
+        btn.textContent = "コピーしました";
+        setTimeout(function () { btn.textContent = t; }, 1400);
+      } catch (e) {}
+    });
+  });
+})();
+  </script>
+</body>
+</html>

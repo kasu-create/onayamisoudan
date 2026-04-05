@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>購入ありがとうございます</title>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --card: #151b26;
+      --line: #2a3544;
+      --text: #eef3f8;
+      --sub: #8fa3b8;
+      --accent: #4d9fff;
+      --ok: #3dd68c;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+    h1 { font-size: 1.35rem; margin: 0 0 0.75rem; }
+    .ok { color: var(--ok); font-weight: 700; }
+    .box {
+      margin-top: 1.25rem;
+      padding: 1.1rem 1.15rem;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      font-size: 0.92rem;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.7rem 1.1rem;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #061018;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .btn:hover { filter: brightness(1.06); }
+    .muted { color: var(--sub); font-size: 0.88rem; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    {% if paid %}
+    <h1><span class="ok">決済が完了しました</span></h1>
+    <p class="muted">ご購入ありがとうございます。以下からブラウザツールにアクセスできます。</p>
+    {% if amount_display %}
+    <p class="muted">お支払い額: <strong style="color:var(--text)">{{ amount_display }}</strong></p>
+    {% endif %}
+    {% if customer_email %}
+    <p class="muted">レシートは <strong style="color:var(--text)">{{ customer_email }}</strong> に送られている場合があります（Stripe設定による）。</p>
+    {% endif %}
+
+    <div class="box">
+      <strong>オンラインダッシュボード</strong><br />
+      案の検索・フィルタ・CSV出力ができます。
+      <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;">
+        <a class="btn" href="{{ dashboard_url }}">ダッシュボードを開く</a>
+        <a class="btn" href="{{ catalog_url }}" style="background:#2a7abf;">全件カタログ</a>
+      </div>
+    </div>
+
+    {% if delivery_url %}
+    <div class="box" style="margin-top:1rem;">
+      <strong>追加の納品物</strong><br />
+      <a href="{{ delivery_url }}">{{ delivery_url }}</a><br />
+      <span class="muted">（Googleドライブ等。環境変数 POST_PURCHASE_DELIVERY_URL で設定）</span>
+    </div>
+    {% endif %}
+
+    <p class="muted" style="margin-top:1.5rem;">session_id: {{ session_id[:24] }}…</p>
+    {% else %}
+    <h1>確認できませんでした</h1>
+    <p class="muted">セッションが無効か、支払い確認に失敗しました。カード会社／Stripeの画面をご確認のうえ、問題が続く場合はお問い合わせください。</p>
+    <p><a href="{{ url_for('index') }}">トップへ戻る</a></p>
+    {% endif %}
+  </div>
+</body>
+</html>

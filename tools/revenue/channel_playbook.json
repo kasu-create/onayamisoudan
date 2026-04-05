@@ -1,0 +1,113 @@
+{
+  "disclaimer_ja": "各プラットフォームの利用規約・手数料・外部サイトへの誘導・決済リンクの扱いは、掲載前に必ず最新の公式ヘルプで確認してください。本ページは文案テンプレートの参考であり、法的・契約上の助言ではありません。",
+  "channels": [
+    {
+      "id": "own_lp",
+      "name": "自社サイト・SNS",
+      "url": "",
+      "role": "自分のドメイン・X・note 等",
+      "fit": "すべての商品に共通。規約リスクを自分でコントロールしやすい。",
+      "base_score": 3,
+      "category_keywords": [],
+      "keyword_weight": 0,
+      "title_template": "【月額】{category}向け「{title}」ニッチSaaSテーマ",
+      "body_prefix": "▼ 商品ページ（詳細・お申込み）\n下記URLからご確認ください。",
+      "body_suffix": "",
+      "posting_steps": [
+        "PUBLIC_BASE_URL（本番URL）を .env に設定しておく",
+        "下記「案件タイトル」「案件本文」をコピーして投稿",
+        "必要なら画像は共有ページのスクショを添付"
+      ]
+    },
+    {
+      "id": "freelance_start",
+      "name": "フリーランススタート",
+      "url": "https://freelance-start.com/jobs",
+      "role": "クライアントで案件を投稿",
+      "fit": "士業・B2B・業務系テーマ。企業・個人事業主クライアントが多い領域と相性が出やすい。",
+      "base_score": 2,
+      "category_keywords": ["士業", "B2B", "採用", "不動産", "バックオフィス", "規制", "現場", "教育"],
+      "keyword_weight": 2,
+      "title_template": "【{category}】{title}｜SaaSテーマ検討（リサーチ月額プラン）",
+      "body_prefix": "■ 概要\nニッチSaaSのテーマ案について、スコアリング済みのリサーチを月額プランで提供しています。",
+      "body_suffix": "■ 進め方\n興味のある方は本文中のURLから概要・お申込みページをご確認ください。",
+      "posting_steps": [
+        "https://freelance-start.com/jobs から案件を作成",
+        "カテゴリ・予算・納期は運用に合わせて記入",
+        "本文に下記文案を貼り、詳細URLを必ず含める"
+      ]
+    },
+    {
+      "id": "lancers",
+      "name": "ランサーズ",
+      "url": "https://www.lancers.jp/client/job/post",
+      "role": "クライアントで仕事を依頼",
+      "fit": "Web・マーケ・業務ツール系。募集テンプレが豊富でB2B寄りのテーマと相性が出やすい。",
+      "base_score": 2,
+      "category_keywords": ["EC", "通販", "採用", "B2B", "士業", "不動産", "教育", "飲食"],
+      "keyword_weight": 2,
+      "title_template": "{title}｜ニッチSaaSテーマ（月額リサーチプランの案内）",
+      "body_prefix": "■ 依頼の趣旨\n特定業種向けSaaSのテーマ案について、事前リサーチ・優先度付け済みの情報を月額で提供します。",
+      "body_suffix": "■ 詳細\n以下URLに商品ページ・申込みがあります。",
+      "posting_steps": [
+        "ランサーズにクライアント登録後「仕事を依頼」",
+        "内容に下記文案を貼り付け",
+        "外部決済・連絡先の扱いはランサーズ規約に従う"
+      ]
+    },
+    {
+      "id": "crowdworks",
+      "name": "クラウドワークス",
+      "url": "https://crowdworks.jp/",
+      "role": "クライアントで仕事を依頼",
+      "fit": "幅広いカテゴリ。事務・調査・システム関連の募集と並列しやすい。",
+      "base_score": 2,
+      "category_keywords": ["バックオフィス", "士業", "採用", "医療", "美容", "規制", "EC"],
+      "keyword_weight": 2,
+      "title_template": "【{category}】{title}／ニッチSaaSテーマ案（月額プラン）",
+      "body_prefix": "■ 内容\n業種特化SaaSのテーマについて、スコア付きリストの一部を月額プランとして提供しています。",
+      "body_suffix": "■ 申込み\n詳細・契約は専用ページ（下記URL）から行ってください。",
+      "posting_steps": [
+        "クラウドワークスでクライアント登録し「仕事を依頼」",
+        "下記タイトル・本文をコピーして貼り付け",
+        "報酬形態は「情報提供・資料販売に近い案内」に合わせて設定"
+      ]
+    },
+    {
+      "id": "coconala",
+      "name": "ココナラ",
+      "url": "https://coconala.com/",
+      "role": "サービス出品（スキルマーケット）",
+      "fit": "個人向け・コンサル色が強いテーマ。士業・美容・教育・趣味ビジネスなど「人が見える」領域と相性が出やすい。",
+      "base_score": 1,
+      "category_keywords": ["美容", "医療", "教育", "飲食", "士業", "サロン", "ジム", "カウンセラー"],
+      "keyword_weight": 2,
+      "title_template": "【{category}】{title}｜SaaSアイデアリサーチ（月額）",
+      "body_prefix": "■ 提供内容\nニッチSaaSのテーマ方向性・市場観点の整理済み情報を、月額プランでご案内しています。",
+      "body_suffix": "※ ココナラの規約上、外部決済・外部URL誘導の可否は必ず公式ガイドで確認し、違反にならない形（例: オプション・別途契約の説明のみ等）に調整してください。",
+      "posting_steps": [
+        "ココナラでサービスを新規出品",
+        "説明文に下記をベースに編集（外部URLの扱いは規約順守）",
+        "価格はココナラ内の単価と、自サイトの月額の関係を分かりやすく書く"
+      ]
+    },
+    {
+      "id": "x_note",
+      "name": "X（Twitter）・note",
+      "url": "https://x.com/",
+      "role": "短文＋固定ポスト／記事下リンク",
+      "fit": "すべての商品に使える拡散用。特に訴求が明確なタイトルほど効きやすい。",
+      "base_score": 2,
+      "category_keywords": [],
+      "keyword_weight": 0,
+      "title_template": "",
+      "body_prefix": "",
+      "body_suffix": "（X向け）上記URLを1ポストに収まるよう短く要約して投稿してください。\n（note向け）見出し＋下記本文＋URLで記事化してください。",
+      "posting_steps": [
+        "140字以内用にタイトルとURLを要約",
+        "noteなら見出し・箇条書きで読みやすく編集",
+        "固定ポストやプロフィールリンクに商品ページURLを設定"
+      ]
+    }
+  ]
+}

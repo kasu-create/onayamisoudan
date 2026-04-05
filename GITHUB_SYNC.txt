@@ -1,0 +1,40 @@
+GitHub に上げる手順（このPCで git が使えるようになってから）
+================================================
+
+■ いま Cursor 側でやったこと
+  - wsgi.py / render.yaml / Dockerfile など本番用ファイルを整備済み
+  - .gitignore から tools/revenue の ideas_catalog.json と channel_playbook.json を除外しないよう修正済み
+  ※ この環境のターミナルでは「git」コマンドが見つからなかったため、push はあなたのPCで実行が必要
+
+■ 1) Git を入れる（未インストールなら）
+  https://git-scm.com/download/win
+  インストール後、PowerShell を開き直す。
+
+■ 2) 初回だけ（リモートがまだなら）
+  GitHub で空のリポジトリを作成（README なしでも可）
+  PowerShell:
+
+    cd C:\Users\green\yt-shorts-app
+    git remote -v
+    # 何も出なければ:
+    git remote add origin https://github.com/あなたのユーザー名/リポジトリ名.git
+
+■ 3) コミットして push
+    cd C:\Users\green\yt-shorts-app
+    git status
+    git add -A
+    git status
+    git commit -m "Production: wsgi entry, Render start command, catalog json tracked"
+    git branch -M main
+    git push -u origin main
+
+  認証は GitHub の「Personal Access Token」または GitHub Desktop を利用。
+
+■ 4) Render
+  GitHub と連携済みなら自動デプロイ。手動なら Settings の Start を確認:
+    gunicorn --bind 0.0.0.0:$PORT --workers 2 wsgi:app
+    Build: pip install -r tools/revenue/requirements.txt
+    Root Directory: 空
+
+■ 秘密鍵
+  tools/revenue/.env は .gitignore 済み。GitHub に上げない。

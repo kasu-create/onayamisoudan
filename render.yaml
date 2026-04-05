@@ -1,0 +1,14 @@
+# Render Blueprint 例: ダッシュボード用に repo ルートから起動（tools 親を含む）
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: niche-saas-revenue
+    runtime: python
+    plan: free
+    buildCommand: pip install -r tools/revenue/requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 wsgi:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: FLASK_DEBUG
+        value: "false"

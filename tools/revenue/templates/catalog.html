@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>月額プラン一覧 — ニッチSaaSアイデア</title>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --card: #151b26;
+      --line: #2a3544;
+      --text: #eef3f8;
+      --sub: #8fa3b8;
+      --accent: #4d9fff;
+      --ok: #3dd68c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+    header {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--card);
+    }
+    header h1 { margin: 0 0 0.35rem; font-size: 1.15rem; }
+    header p { margin: 0; color: var(--sub); font-size: 0.82rem; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
+    .nav { margin-bottom: 1rem; font-size: 0.85rem; }
+    .nav a { color: var(--accent); }
+    .grid {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.85rem 0.9rem;
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .card .ref {
+      color: var(--sub);
+      font-size: 0.65rem;
+      letter-spacing: 0.02em;
+      margin-top: 0.15rem;
+      opacity: 0.85;
+    }
+    .card .cat { color: var(--accent); font-size: 0.72rem; }
+    .card .title { font-weight: 600; font-size: 0.92rem; }
+    .meta { font-size: 0.75rem; color: var(--sub); }
+    .btn {
+      display: inline-block;
+      text-align: center;
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      background: var(--ok);
+      color: #061018;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.82rem;
+      margin-top: 0.25rem;
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+      background: #3a4a5e;
+      color: #9aaaba;
+    }
+    .hint { margin-top: 1.25rem; color: var(--sub); font-size: 0.78rem; }
+    input#q {
+      width: 100%;
+      max-width: 420px;
+      margin: 0.75rem 0 1rem;
+      padding: 0.45rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--text);
+    }
+    code { font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>月額プラン一覧</h1>
+    <p>
+      カードごとに<strong>独立した月額プラン</strong>です。業種や課題に合うものだけをお選びください。
+    </p>
+  </header>
+  <div class="wrap">
+    <div class="nav">
+      <a href="{{ url_for('index') }}">トップ</a>
+      · <a href="{{ url_for('sell_hub') }}" style="color:var(--ok);font-weight:600;">どこで売るか</a>
+      · <a href="{{ url_for('dashboard') }}">一覧でスコア比較</a>
+    </div>
+    {% if not stripe_ideas_ok %}
+    <p class="hint" style="color:#c9a227;margin-bottom:0.75rem;">
+      <strong>決済の準備中:</strong> 管理者が Stripe を設定すると「月額で始める」からお申し込みいただけます。
+    </p>
+    {% endif %}
+    <label for="q" style="color:var(--sub);font-size:0.78rem;">キーワードで絞り込み</label>
+    <input type="search" id="q" placeholder="例: 税理士、予約、士業…" autocomplete="off" />
+    <div class="grid" id="grid">
+      {% for it in ideas %}
+      <div class="card" data-hay="{{ it.id }} {{ it.category }} {{ it.title }}">
+        <div class="title">{{ it.title }}</div>
+        <div class="cat">{{ it.category }}</div>
+        <div class="meta">売りやすさ {{ it.sell }} · 競争の薄さ {{ it.comp }} · 継続化 {{ it.recur }} · 計 {{ it.total }}</div>
+        {% if stripe_ideas_ok %}
+        <a class="btn" href="{{ url_for('checkout_idea', idea_id=it.id) }}">¥{{ "{:,}".format(it.monthly_jpy) }}/月で始める</a>
+        {% else %}
+        <span class="btn disabled">準備中</span>
+        {% endif %}
+        <div class="ref">
+          <a href="{{ url_for('sell_idea_page', idea_id=it.id) }}" style="color:var(--ok);text-decoration:none;font-weight:600;">コピペ販売キット</a>
+          · <a href="{{ url_for('product_page', idea_id=it.id) }}" style="color:var(--accent);text-decoration:none;">共有ページ</a>
+          · #{{ it.id }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="hint">
+      ※ 表示内容・価格は予告なく見直すことがあります。請求・契約条件は Checkout 画面および Stripe の内容が優先します。
+    </p>
+  </div>
+  <script>
+(function () {
+  var grid = document.getElementById("grid");
+  var q = document.getElementById("q");
+  function norm(s) { return (s || "").toLowerCase(); }
+  function apply() {
+    var t = norm(q.value);
+    grid.querySelectorAll(".card").forEach(function (c) {
+      var hay = norm(c.getAttribute("data-hay"));
+      c.style.display = !t || hay.indexOf(t) !== -1 ? "" : "none";
+    });
+  }
+  q.addEventListener("input", apply);
+})();
+  </script>
+</body>
+</html>

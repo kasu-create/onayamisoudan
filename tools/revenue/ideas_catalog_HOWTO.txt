@@ -1,0 +1,54 @@
+ideas_catalog.json — 商品を増やす・直す
+====================================
+
+■ ここが正（ダッシュボード・/catalog・Stripe 個別Checkout・/api/ideas はすべてこれを読む）
+
+  tools/revenue/ideas_catalog.json
+
+■ 新しい商品を1件足す例
+
+  "ideas" 配列の末尾に、次の形で追加する（カンマ位置に注意）。
+
+    {
+      "id": 101,
+      "category": "士業",
+      "title": "新・◯◯向け□□ツール",
+      "sell": 4,
+      "comp": 3,
+      "recur": 5,
+      "monthly_jpy": 3500
+    }
+
+  - id … 既存と被らない整数
+  - sell / comp / recur … 1〜5（スコア表用）
+  - monthly_jpy … 省略可。省略時は default_monthly_jpy または .env の IDEA_DEFAULT_MONTHLY_JPY
+  - listing_pitch … 任意。フリーランス案件サイト等に貼る説明文のカスタム（複数行可）。
+      次のプレースホルダが使えます:
+        {{URL}} … 共有ページ https://あなたのドメイン/p/案id （本番では PUBLIC_BASE_URL が入る）
+        {{MONTHLY}} … 月額（カンマ区切り数字のみ）
+      省略時はサーバーが category / title から自動でたたき台を生成します。
+
+■ メタ情報（バッジ・パターン）
+
+  "meta" 以下を編集する。
+  - top20 … 番号の配列（任意で入れ替え）
+  - priority … { "案id": 着手順番号 }（JSONのキーは文字列でも数字でもよい）
+  - low_competition … 番号の配列
+  - patterns … 継続パターンごとの id リスト
+
+  新案だけ TOP20 に入れたい → meta.top20 にその id を追加。
+
+■ 反映
+
+  server.py を再起動（py server.py を止めて付け直す）。
+
+■ 画面
+
+  - 表 … http://127.0.0.1:5000/dashboard
+  - 商品ストア（カード） … /store ・ /products ・ /catalog（いずれも同じ）
+  - 商品ごとの共有ページ（案件本文用URL） … /p/案id  例: /p/1
+  - 共有文JSON（自動化向け） … /api/idea/案id/share
+  - チャネル選定＋サイト別コピペ … /sell および /sell/案id ・ API /api/idea/案id/sell-kit
+  - チャネル定義の編集 … tools/revenue/channel_playbook.json
+  - JSON … http://127.0.0.1:5000/api/ideas
+  - ダッシュ用JS … /assets/niche_dashboard.js（/dashboard は同一サーバーで開く。file:// 不可）

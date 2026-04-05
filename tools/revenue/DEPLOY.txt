@@ -1,0 +1,61 @@
+本番デプロイ（ざっくり）
+====================
+
+■ このアプリの前提
+  - 実行ディレクトリは tools/revenue（server.py）
+  - ただし /dashboard は ../niche_saas_ideas_dashboard.html と ../niche_dashboard.js を読む
+  → ホスティングでは「リポジトリの tools フォルダごと」含まれる構成にすること
+
+■ 方法A: Docker（どのクラウドでも使いやすい）
+  リポジトリ直下で:
+    docker build -t niche-revenue .
+    docker run -e PORT=8000 -e PUBLIC_BASE_URL=https://... -e STRIPE_SECRET_KEY=... -e FLASK_SECRET_KEY=... -p 8000:8000 niche-revenue
+
+■ 方法B: Render.com（render.yaml あり）
+  1. GitHub 等にリポジトリを push
+  2. Render で New Blueprint → render.yaml を選択、または Web Service を手動作成
+  3. Root Directory は空（リポジトリルート）
+     Build:  pip install -r tools/revenue/requirements.txt
+     Start:  gunicorn --bind 0.0.0.0:$PORT --workers 2 wsgi:app
+     （リポジトリ直下の wsgi.py が tools/revenue を読み込む。cd 不要）
+  4. Environment に env.production.example を参考に:
+     PUBLIC_BASE_URL（Render が出す https の URL をコピー）
+     STRIPE_SECRET_KEY（本番なら sk_live_）
+     FLASK_SECRET_KEY（ランダム文字列）
+  5. Deploy 後 /health と / で確認
+
+■ Stripe
+  - Checkout の success/cancel は PUBLIC_BASE_URL 基準。デプロイ後に必ず本番URLへ更新。
+  - Webhook を使うなら Stripe に https://あなたのドメイン/webhooks/stripe を登録し STRIPE_WEBHOOK_SECRET を設定。
+
+■ ローカル
+  開発はこれまでどおり:  cd tools/revenue  →  py server.py
+  本番と同じ起動を試す:    cd tools/revenue  →  set PORT=8000  →  gunicorn -b 0.0.0.0:8000 server:app
+
+■ 本番がすべて「Not Found」（白地の英文）のとき（Cursor 内のコードは / も /sell も定義済み）
+  原因はほぼ「Render 側で Flask(gunicorn) が待ち受けていない」。
+  次を Render の Web Service 設定でそろえる:
+
+  【推奨・リポジトリルートがルートの場合】
+    Environment: Python 3.x（例: 3.12）
+    Root Directory: （空）※「tools/revenue」のみにしない
+    Build Command:
+      pip install -r tools/revenue/requirements.txt
+    Start Command:
+      gunicorn --bind 0.0.0.0:$PORT --workers 2 wsgi:app
+
+  【Root Directory を tools/revenue にした場合】
+    Build Command:
+      pip install -r requirements.txt
+    Start Command:
+      gunicorn --bind 0.0.0.0:$PORT --workers 2 server:app
+    ※「cd tools/revenue &&」は付けない（二重パスで cd が失敗し、gunicorn が動かないことがある）
+
+  そのほか:
+    - サービス種別は「Web Service」。「Static Site」だと Python は動かない。
+    - リポジトリの tools/revenue/server.py に @app.route("/") があること（手元のブランチを push 済みか）。
+    - 修正後は Manual Deploy → Clear build cache and deploy。
+
+■ Cursor / リポジトリ内の確認ポイント（緑のチェック）
+  - render.yaml の startCommand は上記「ルート空」と一致しているか。
+  - Dockerfile 利用時は Web Service の Docker を選び、リポジトリ直下 Dockerfile を参照するか。

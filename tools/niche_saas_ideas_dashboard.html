@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ニッチSaaS案 100 — スコア・フィルタ</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a2332;
+      --border: #2d3a4d;
+      --text: #e7edf5;
+      --muted: #8b9cb3;
+      --accent: #5b9cff;
+      --good: #3dd68c;
+      --warn: #f0b429;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    header h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+      padding: 1rem 1.5rem;
+      align-items: flex-end;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .controls label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .controls input, .controls select {
+      min-width: 8rem;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .controls input[type="search"] { min-width: 14rem flex 1 1 12rem; }
+    .chk {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+    }
+    .chk input { min-width: auto; }
+    main { padding: 0 1.5rem 2rem; overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+    }
+    th, td {
+      padding: 0.5rem 0.65rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    tr:hover td { background: rgba(91, 156, 255, 0.06); }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-right: 0.25rem;
+      margin-bottom: 0.15rem;
+    }
+    .badge-top { background: rgba(61, 214, 140, 0.25); color: var(--good); }
+    .badge-pri { background: rgba(240, 180, 41, 0.25); color: var(--warn); }
+    .badge-low { background: rgba(91, 156, 255, 0.2); color: var(--accent); }
+    .cat { color: var(--muted); font-size: 0.8rem; white-space: nowrap; }
+    .total { font-weight: 600; color: var(--good); }
+    .footer-note {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    a.sub-link {
+      color: var(--good);
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    a.sub-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ニッチ × 継続課金 — アイデア100</h1>
+    <p>売りやすさ・競争の薄さ・継続化（各1〜5） / 合計3〜15。<strong>月額</strong>は Stripe サブスク用（同一ホストで <code>/dashboard</code> を開く）。CSV出力可。</p>
+  </header>
+
+  <div class="controls">
+    <label>キーワード<input type="search" id="q" placeholder="例: 税理士、予約" autocomplete="off" /></label>
+    <label>カテゴリ
+      <select id="cat">
+        <option value="">すべて</option>
+      </select>
+    </label>
+    <label>並び順
+      <select id="sort">
+        <option value="total-desc">合計（高い順）</option>
+        <option value="sell-desc">売りやすさ</option>
+        <option value="comp-desc">競争の薄さ</option>
+        <option value="recur-desc">継続化</option>
+        <option value="id-asc">番号（昇順）</option>
+        <option value="title-asc">題名（あいうえお）</option>
+      </select>
+    </label>
+    <label>合計下限<input type="number" id="minTotal" min="3" max="15" value="" placeholder="－" /></label>
+    <label class="chk"><input type="checkbox" id="onlyTop20" /> TOP20のみ</label>
+    <label class="chk"><input type="checkbox" id="onlyPri" /> 着手10のみ</label>
+    <label class="chk"><input type="checkbox" id="onlyLow" /> 競争薄め15候補</label>
+    <label>継続パターン
+      <select id="pattern">
+        <option value="">（フィルタなし）</option>
+        <option value="1">予約・リマインド系</option>
+        <option value="2">資料回収・期限管理系</option>
+        <option value="3">修繕・進捗管理系</option>
+        <option value="4">追客・休眠掘り起こし系</option>
+        <option value="5">規制・チェック系</option>
+      </select>
+    </label>
+    <label class="chk"><input type="checkbox" id="toggleArchetype" checked /> パターン列を表示</label>
+    <button type="button" id="csv" style="padding:0.5rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;">CSVダウンロード</button>
+  </div>
+
+  <main>
+    <div class="legend">
+      <span><span class="badge badge-top">TOP20</span> 前回スコアリングの上位</span>
+      <span><span class="badge badge-pri">着手</span> 推奨着手順（10件）</span>
+      <span><span class="badge badge-low">薄め</span> 競争薄め候補（15件・リスト準拠）</span>
+      <span style="margin-left:auto;"><a href="/catalog" style="color:var(--accent);">全件カード表示（/catalog）</a></span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>カテゴリ</th>
+          <th>題名</th>
+          <th class="num">売</th>
+          <th class="num">競</th>
+          <th class="num">継</th>
+          <th class="num">計</th>
+          <th class="num">月額</th>
+          <th id="thArc">継続パターン</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <p class="footer-note" id="count"></p>
+  </main>
+
+  <script src="/assets/niche_dashboard.js" defer></script>
+</body>
+</html>
